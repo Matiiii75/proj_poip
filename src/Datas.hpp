@@ -31,6 +31,13 @@ struct allFiles {
     std::string f1,f2,f3,f4,f5,f6; 
 };
 
+
+
+struct Solution{
+    std::vector<int> prodToRack; //for each product store his rack
+    std::vector<std::vector<int>> RackToProd; //for each rack store his products
+};
+
 struct Datas {
 
     /* ATTRIBUTES */
