@@ -1,0 +1,16 @@
+# Objets
+src/*.o
+
+#ignorer main
+src/main.cpp
+
+# Tout fichier sans extension dans src = exécutable
+src/*
+!src/*.c
+!src/*.cpp
+!src/*.h
+!src/*.hpp
+!src/*.md
+!src/
+
+cmd_exec.txt

@@ -11,8 +11,8 @@ struct Familly { // will contain infos relatives to fam and products
 }; 
 
 struct Orders {
-    std::vector<std::unordered_set<int>> ordersToProduct; // fastly check products associated to orders
-    std::vector<std::unordered_set<int>> productToOrders; // fastly check orders associated to product
+    std::vector<std::unordered_set<int>> ordsToProd; // fastly check products associated to orders
+    std::vector<std::unordered_set<int>> prodToOrds; // fastly check orders associated to product
     void displayDatas(); 
 };
 

@@ -25,18 +25,18 @@ void Orders::displayDatas() {
     std::cout << "#### ENTERED ORDERS DISPLAY FUNCTION ####" << std::endl;
     std::cout << std::endl;
 
-    for(int i = 0; i < (int)ordersToProduct.size(); ++i) { // orders to product display
+    for(int i = 0; i < (int)ordsToProd.size(); ++i) { // orders to product display
         std::cout << "order " << i << " : "; 
-        for(const auto& prods : ordersToProduct[i])
+        for(const auto& prods : ordsToProd[i])
             std::cout << prods << " ";
         std::cout << std::endl; 
     }
 
     std::cout << std::endl;
     
-    for(int i = 0; i < (int)productToOrders.size(); ++i) { // product to order display 
+    for(int i = 0; i < (int)prodToOrds.size(); ++i) { // product to order display 
         std::cout << "product " << i << " is in : "; 
-        for(const auto& order : productToOrders[i]) 
+        for(const auto& order : prodToOrds[i]) 
             std::cout << order << " "; 
         std::cout << std::endl;
     }
@@ -60,8 +60,8 @@ void Datas::readMetaDatas(const std::string& f1) {
     dists.resize(nbRacks, std::vector<int>(nbRacks)); 
     fam.prodToFam.resize(nbProd); 
     fam.famToProd.resize(nbFam); 
-    ords.ordersToProduct.resize(nbOrd); 
-    ords.productToOrders.resize(nbProd); 
+    ords.ordsToProd.resize(nbOrd); 
+    ords.prodToOrds.resize(nbProd); 
     aisle.resize(nbAisle); 
 
 }   
@@ -152,8 +152,8 @@ void Datas::readOrders(const std::string& f6) {
             int currProduct; 
             f >> currProduct; 
             
-            ords.ordersToProduct[i].insert(currProduct); // memorize product is in order i 
-            ords.productToOrders[currProduct].insert(i); // memorize order i is in currProduct 
+            ords.ordsToProd[i].insert(currProduct); // memorize product is in order i 
+            ords.prodToOrds[currProduct].insert(i); // memorize order i is in currProduct 
         }
     }
 
