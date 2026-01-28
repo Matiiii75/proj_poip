@@ -2,7 +2,7 @@
 
 /* display functions */
 
-void Familly::displayDatas() {
+void Familly::displayData() {
 
     std::cout << "#### ENTERED FAMILLY DISPLAY FUNCTION ####" << std::endl;
     std::cout << std::endl;
@@ -17,7 +17,7 @@ void Familly::displayDatas() {
     std::cout << std::endl << std::endl;
 }
 
-void Orders::displayDatas() {
+void Orders::displayData() {
 
     std::cout << "#### ENTERED ORDERS DISPLAY FUNCTION ####" << std::endl;
     std::cout << std::endl;
@@ -36,7 +36,7 @@ void Orders::displayDatas() {
 }
 
 
-void Datas::readMetaDatas(const std::string& f1) {
+void Data::readMetaData(const std::string& f1) {
 
     std::ifstream f(f1); 
     if(!f.is_open()) throw std::runtime_error("couldn't open file");
@@ -53,7 +53,7 @@ void Datas::readMetaDatas(const std::string& f1) {
 
 }   
 
-void Datas::readRackCapacity(const std::string& f2) {
+void Data::readRackCapacity(const std::string& f2) {
 
     std::ifstream f(f2); 
     if(!f.is_open()) throw std::runtime_error("couldn't open file");
@@ -63,7 +63,7 @@ void Datas::readRackCapacity(const std::string& f2) {
 
 }
 
-void Datas::readDistances(const std::string& f3) {
+void Data::readDistances(const std::string& f3) {
 
     std::ifstream f(f3); 
     if(!f.is_open())throw std::runtime_error("couldn't open file"); 
@@ -76,7 +76,7 @@ void Datas::readDistances(const std::string& f3) {
 
 }
 
-void Datas::readProdCircuits(const std::string& f4) {
+void Data::readProdCircuits(const std::string& f4) {
 
     std::ifstream f(f4); 
     if(!f.is_open()) throw std::runtime_error("couldn't open file"); 
@@ -91,7 +91,7 @@ void Datas::readProdCircuits(const std::string& f4) {
 
 }
 
-void Datas::readAisleRacks(const std::string& f5) {
+void Data::readAisleRacks(const std::string& f5) {
 
     std::ifstream f(f5); 
     if(!f.is_open()) throw std::runtime_error("couldn't open file");
@@ -106,7 +106,7 @@ void Datas::readAisleRacks(const std::string& f5) {
 
 }
 
-void Datas::readOrders(const std::string& f6) {
+void Data::readOrders(const std::string& f6) {
 
     std::ifstream f(f6); 
     if(!f.is_open()) throw std::runtime_error("couldn't open file");
@@ -124,9 +124,9 @@ void Datas::readOrders(const std::string& f6) {
 
 }
 
-Datas::Datas(const allFiles& allfiles) {
+Data::Data(const allFiles& allfiles) {
 
-    readMetaDatas(allfiles.f1);
+    readMetaData(allfiles.f1);
     readRackCapacity(allfiles.f2); 
     readDistances(allfiles.f3);     // call every readers
     readProdCircuits(allfiles.f4); 
@@ -135,7 +135,7 @@ Datas::Datas(const allFiles& allfiles) {
 
 }
 
-void Datas::displayDatas() {
+void Data::displayData() {
 
     std::cout << "#### ENTERED DISPLAY DATA FUNCTION #### " << std::endl << std::endl;
     std::cout << "nb racks : " << nbRacks << std::endl;
@@ -163,9 +163,20 @@ void Datas::displayDatas() {
     for(const auto& rack : aisle) std::cout << rack << " "; 
     std::cout << std::endl << std::endl;
 
-    fam.displayDatas(); 
-    ords.displayDatas(); 
+    fam.displayData(); 
+    ords.displayData(); 
 
 }
 
 
+// std::vector<int> Data::InitcapRacksAer(){
+//     capRacksAer = capRacks; 
+//     for(int i = 0; i < aisle.size()-1; ++i) {
+//         int aisleCap = 0;
+//         for(int j = aisle[i]; j < aisle[i+1]; ++j)
+//             aisleCap += capRacks[j]; 
+//         aisleCap = std::ceil(aisleCap*0.80);
+//         for(int j = aisle[i]; j > aisle[i-1]; --j)
+//             while()
+//     } 
+// }
