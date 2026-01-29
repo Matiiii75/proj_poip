@@ -96,7 +96,7 @@ void Data::readProdCircuits(const std::string& f4) {
     f >> nbProd; 
     for(int i = 0; i < nbProd; ++i) { 
         int currFam; f >> currFam;// store currFamilly 
-        --currFam; // re indexation of Fam
+        // --currFam; // re indexation of Fam
         fam.prodToFam[i] = currFam; // memorize product i is in familly currFam
         fam.famToProd[currFam].insert(i); // memorize currFam is assigned to product i
     }   
@@ -139,9 +139,9 @@ void Data::readOrders(const std::string& f6) {
 Data::Data(const allFiles& allfiles) {
 
     readMetaData(allfiles.f1);
-    readRackCapacity(allfiles.f2); 
+    readRackCapacity(allfiles.f2);
     readDistances(allfiles.f3);     // call every readers
-    readProdCircuits(allfiles.f4); 
+    readProdCircuits(allfiles.f4);
     readAisleRacks(allfiles.f5); 
     readOrders(allfiles.f6);
 
@@ -198,7 +198,9 @@ std::vector<int> Data::initCapRacksAer() const {
                 capAisle += capRacks[j]; // add cap of rack i
         }
         int aisleAeration = std::ceil(capAisle*0.20);  // compute value of aisle i aeration 
-        for(int j = 0; j < aisleAeration; ++j) { // take out 1 by 1 capacity in current aisle, until aeration >= 20%
+        std::cout << "cap aisle : " << capAisle << std::endl;
+        std::cout << "pourcentage aisle aer : " << aisleAeration << std::endl;
+        for(int count = 0; count < aisleAeration; ++count) { // take out 1 by 1 capacity in current aisle, until aeration >= 20%
 
             for(int j = firstRack; j <= lastRack; ++j) { // iterate from first rack to last rack of current aisle
                 if(racksCapCopy[j] > 0) {
