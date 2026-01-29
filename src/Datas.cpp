@@ -36,6 +36,7 @@ void Orders::displayData() {
 }
 
 void Solution::displaySolution(std::string file){
+
     std::ofstream write(file); // open output file
 
     int nbProd = prodToRack.size(); // compute  number of products
@@ -96,7 +97,7 @@ void Data::readProdCircuits(const std::string& f4) {
     f >> nbProd; 
     for(int i = 0; i < nbProd; ++i) { 
         int currFam; f >> currFam;// store currFamilly 
-        // --currFam; // re indexation of Fam
+        //--currFam; // re indexation of Fam
         fam.prodToFam[i] = currFam; // memorize product i is in familly currFam
         fam.famToProd[currFam].insert(i); // memorize currFam is assigned to product i
     }   
@@ -110,10 +111,11 @@ void Data::readAisleRacks(const std::string& f5) {
         
     f >> nbAisle; 
     for(int i = 0; i < nbAisle; ++i) {
-        int currNbRacks, temp;  
+        int currNbRacks; 
         f >> currNbRacks; 
-        aisle[i] = currNbRacks+currNbRacks*i; // compute biggest rack id in aisle i
-        for(int j = 0; j < currNbRacks; ++j) f >> temp; // ignore those
+        for(int j = 0; j < currNbRacks; ++j) {
+            f >> aisle[i]; 
+        }
     }
 
 }
@@ -192,16 +194,14 @@ std::vector<int> Data::initCapRacksAer() const {
         if (i > 0) { // case > first aisle 
             firstRack = aisle[i-1] + 1; // first rack of aisle is last rack of prev aisle + 1 
             for(int j = firstRack; j <= lastRack; ++j) capAisle += capRacks[j]; 
+    
         } else { // case first aisle 
             firstRack = 1; // Then first rack of aisle is 1
             for(int j = 1; j <= lastRack; ++j) // for each rack in aisle 
                 capAisle += capRacks[j]; // add cap of rack i
         }
-        int aisleAeration = std::ceil(capAisle*0.20);  // compute value of aisle i aeration 
-        std::cout << "cap aisle : " << capAisle << std::endl;
-        std::cout << "pourcentage aisle aer : " << aisleAeration << std::endl;
+        int aisleAeration = std::ceil(capAisle*(aeration/100.0));  // compute value of aisle i aeration 
         for(int count = 0; count < aisleAeration; ++count) { // take out 1 by 1 capacity in current aisle, until aeration >= 20%
-
             for(int j = firstRack; j <= lastRack; ++j) { // iterate from first rack to last rack of current aisle
                 if(racksCapCopy[j] > 0) {
                     --racksCapCopy[j]; // decrease cap of rack by 1
