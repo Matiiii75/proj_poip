@@ -31,10 +31,20 @@ struct Orders {
 struct allFiles {
     std::string f1,f2,f3,f4,f5,f6; 
 };
-
 struct Solution{
+
+    /* ATTRIBUTES */
     std::vector<int> prodToRack; //for each product store his rack
     std::vector<std::vector<int>> RackToProd; //for each rack store his products
+
+    /* METHODS */
+    /**
+    * @brief display solution accordind to convention
+    * @param file where the solution is write accordind to convention
+    */
+   void displaySolution(std::string file);
+
+
 };
 
 struct Data {
@@ -55,9 +65,9 @@ struct Data {
     /* METHODS */
 
     /**
-     * @brief struct constructor that initiate problem values
-     * @param allfiles struct containing of files of instance
-     */
+    * @brief struct constructor that initiate problem values
+    * @param allfiles struct containing of files of instance
+    */
     Data(const allFiles& allfiles); 
 
     void readMetaData(const std::string& f1); // read metadatas.txt
@@ -73,3 +83,4 @@ struct Data {
 
 
 }; 
+

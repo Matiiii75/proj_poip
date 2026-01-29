@@ -35,6 +35,18 @@ void Orders::displayData() {
     std::cout << std::endl << std::endl;
 }
 
+void Solution::displaySolution(std::string file){
+    std::ofstream write(file); // open output file
+
+    int nbProd = prodToRack.size(); // compute  number of products
+
+    write << nbProd << std::endl; // write number of froducts
+    for( int p = 0; p < nbProd; ++p) write << prodToRack[p] << std::endl; // for each product write his rack
+
+    write.close(); // close output file
+
+}
+
 
 void Data::readMetaData(const std::string& f1) {
 
