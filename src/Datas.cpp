@@ -168,15 +168,34 @@ void Data::displayData() {
 
 }
 
+std::vector<int> Data::initCapRacksAer() const {
 
-// std::vector<int> Data::InitcapRacksAer(){
-//     capRacksAer = capRacks; 
-//     for(int i = 0; i < aisle.size()-1; ++i) {
-//         int aisleCap = 0;
-//         for(int j = aisle[i]; j < aisle[i+1]; ++j)
-//             aisleCap += capRacks[j]; 
-//         aisleCap = std::ceil(aisleCap*0.80);
-//         for(int j = aisle[i]; j > aisle[i-1]; --j)
-//             while()
-//     } 
-// }
+    std::vector<int> racksCapCopy = capRacks; 
+    for(int i = 0; i < (int)aisle.size(); ++i) { // for each aisle
+
+        int capAisle = 0; 
+        int lastRack = aisle[i]; // store last rack of current aisle
+        int firstRack; 
+
+        if (i > 0) { // case > first aisle 
+            firstRack = aisle[i-1] + 1; // first rack of aisle is last rack of prev aisle + 1 
+            for(int j = firstRack; j <= lastRack; ++j) capAisle += capRacks[j]; 
+        } else { // case first aisle 
+            firstRack = 1; // Then first rack of aisle is 1
+            for(int j = 1; j <= lastRack; ++j) // for each rack in aisle 
+                capAisle += capRacks[j]; // add cap of rack i
+        }
+        int aisleAeration = std::ceil(capAisle*0.20);  // compute value of aisle i aeration 
+        for(int j = 0; j < aisleAeration; ++j) { // take out 1 by 1 capacity in current aisle, until aeration >= 20%
+
+            for(int j = firstRack; j <= lastRack; ++j) { // iterate from first rack to last rack of current aisle
+                if(racksCapCopy[j] > 0) {
+                    --racksCapCopy[j]; // decrease cap of rack by 1
+                    break; // stop searching for rack to empty, go next aeration unit
+                } 
+            }
+        }
+    } 
+
+    return racksCapCopy; // return new capacity of racks; wich determine implicitely wich racks are lock for aeration
+}

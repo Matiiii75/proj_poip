@@ -69,7 +69,7 @@ struct Data {
         
     void displayData(); // display all data in the structure 
 
-    std::vector<int> InitcapRacksAer(); // Initilisation of constrained aeration capacities
+    std::vector<int> initCapRacksAer() const; // assign initial empty racks in order to respect aeration constr
 
 
 }; 
