@@ -35,14 +35,43 @@ void Orders::displayData() {
     std::cout << std::endl << std::endl;
 }
 
-void Solution::displaySolution(std::string file){
 
-    std::ofstream write(file); // open output file
+void allFiles::computeAllFiles(int numInstance) {
+ 
+    std::string n1,n2,n3,n4,n5,n6;
+    std::string path; 
 
+    n1 = "metadata.txt"; n2 = "rack_capacity.txt";
+    n3 = "rack_adjacency_matrix.txt"; n4 = "product_circuit.txt"; 
+    n5 = "aisle_racks.txt"; n6 = "orders.txt"; 
+    
+    if(numInstance == 0) path = "warehouse_toy/"; 
+    if(numInstance == 1) path = "warehouse_big_/warehouse_big_category/"; 
+    if(numInstance == 2) path = "warehouse_big_/warehouse_big_family/"; 
+    if(numInstance == 3) path = "warehouse_big_/warehouse_big_market/"; 
+
+    f1 = "../data/" + path + n1; f2 = "../data/" + path + n2; 
+    f3 = "../data/" + path + n3; f4 = "../data/" + path + n4; 
+    f5 = "../data/" + path + n5; f6 = "../data/" + path + n6; 
+
+}
+
+
+void Solution::displaySolution(int numInstance) {
+
+    // compute path from numInstance 
+    std::string path; // path to file we write in 
+
+    if(numInstance == 0) path = "../data/warehouse_toy/solutions/sol.txt"; 
+    if(numInstance == 1) path = "../data/warehouse_big_/warehouse_big_category/solutions/sol.txt"; 
+    if(numInstance == 2) path = "../data/warehouse_big_/warehouse_big_family/solutions/sol.txt"; 
+    if(numInstance == 3) path = "../data/warehouse_big_/warehouse_big_market/solutions/sol.txt"; 
+
+    std::ofstream write(path); // open output file
     int nbProd = prodToRack.size(); // compute  number of products
 
-    write << nbProd << std::endl; // write number of froducts
-    for( int p = 0; p < nbProd; ++p) write << prodToRack[p] << std::endl; // for each product write his rack
+    write << nbProd << std::endl; // write number of froducts 
+    for(int p = 0; p < nbProd; ++p) write << prodToRack[p] << std::endl; // for each product write his rack
 
     write.close(); // close output file
 
@@ -52,7 +81,7 @@ void Solution::displaySolution(std::string file){
 void Data::readMetaData(const std::string& f1) {
 
     std::ifstream f(f1); 
-    if(!f.is_open()) throw std::runtime_error("couldn't open file");
+    if(!f.is_open()) throwErrorFile("readMetaData"); 
 
     f >> nbRacks >> nbLoc >> aeration >> nbProd >> nbFam >> nbAisle >> nbOrd; 
 
@@ -69,7 +98,7 @@ void Data::readMetaData(const std::string& f1) {
 void Data::readRackCapacity(const std::string& f2) {
 
     std::ifstream f(f2); 
-    if(!f.is_open()) throw std::runtime_error("couldn't open file");
+    if(!f.is_open()) throwErrorFile("readRackCapacity"); 
 
     f >> nbRacks; 
     for(int i = 0; i < nbRacks; ++i) f >> capRacks[i]; 
@@ -79,7 +108,7 @@ void Data::readRackCapacity(const std::string& f2) {
 void Data::readDistances(const std::string& f3) {
 
     std::ifstream f(f3); 
-    if(!f.is_open())throw std::runtime_error("couldn't open file"); 
+    if(!f.is_open()) throwErrorFile("readDistances"); 
 
     int nbNodes;
     f >> nbNodes; 
@@ -92,7 +121,7 @@ void Data::readDistances(const std::string& f3) {
 void Data::readProdCircuits(const std::string& f4) {
 
     std::ifstream f(f4); 
-    if(!f.is_open()) throw std::runtime_error("couldn't open file"); 
+    if(!f.is_open()) throwErrorFile("readProdCircuits");  
 
     f >> nbProd; 
     for(int i = 0; i < nbProd; ++i) { 
@@ -107,7 +136,7 @@ void Data::readProdCircuits(const std::string& f4) {
 void Data::readAisleRacks(const std::string& f5) {
 
     std::ifstream f(f5); 
-    if(!f.is_open()) throw std::runtime_error("couldn't open file");
+    if(!f.is_open()) throwErrorFile("readAisleRacks"); 
         
     f >> nbAisle; 
     for(int i = 0; i < nbAisle; ++i) {
@@ -123,7 +152,7 @@ void Data::readAisleRacks(const std::string& f5) {
 void Data::readOrders(const std::string& f6) {
 
     std::ifstream f(f6); 
-    if(!f.is_open()) throw std::runtime_error("couldn't open file");
+    if(!f.is_open()) throwErrorFile("readOrders"); 
 
     f >> nbOrd; 
     for(int i = 0; i < nbOrd; ++i) { // iterate over number of order
@@ -212,4 +241,9 @@ std::vector<int> Data::initCapRacksAer() const {
     } 
 
     return racksCapCopy; // return new capacity of racks; wich determine implicitely wich racks are lock for aeration
+}
+
+
+void Data::throwErrorFile(const std::string& where) {
+    throw std::runtime_error("Couldn't open file at " + where);
 }

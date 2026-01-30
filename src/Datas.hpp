@@ -30,6 +30,7 @@ struct Orders {
  */
 struct allFiles {
     std::string f1,f2,f3,f4,f5,f6; 
+    void computeAllFiles(int numInstance); 
 };
 struct Solution{
 
@@ -39,10 +40,11 @@ struct Solution{
 
     /* METHODS */
     /**
-    * @brief display solution accordind to convention
-    * @param file where the solution is write accordind to convention
+    * @brief write solution according to convention 
+    * @param name name of the folder we write in 
+    * @param numInstance number given in arg of main to id instance 
     */
-   void displaySolution(std::string file);
+   void displaySolution(int numInstance);
 
 
 };
@@ -76,11 +78,10 @@ struct Data {
     void readProdCircuits(const std::string& f4); // read product_circuit.txt
     void readAisleRacks(const std::string& f5); // read aisle_racks.txt
     void readOrders(const std::string& f6); // read orders.txt
-        
-    void displayData(); // display all data in the structure 
 
+    void displayData(); // display all data in the structure 
     std::vector<int> initCapRacksAer() const; // assign initial empty racks in order to respect aeration constr
 
-
+    void throwErrorFile(const std::string& where); // throw error and display where it happened
 }; 
 
