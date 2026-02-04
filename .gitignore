@@ -3,6 +3,7 @@ src/*.o
 
 #ignorer main
 src/main.cpp
+src/main2.cpp
 
 # Tout fichier sans extension dans src = exécutable
 src/*
