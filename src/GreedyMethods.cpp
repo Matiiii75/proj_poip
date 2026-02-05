@@ -25,3 +25,22 @@ int computeSolValue(const Solution& sol, const Data& data) {
 
     return solVal; 
 }
+
+
+/**
+ * @brief shuffle elements contained in vector
+ * @param vec vector we want to shuffle 
+ * @param g 
+ */
+void shuffleVector(std::vector<int>& vec, std::mt19937& g) {
+    std::shuffle(vec.begin(), vec.end(), g); // shuffle elements 
+}
+
+
+/**
+ * @brief randomly generate ordering of family  
+*/
+std::vector<int> genRandomOrderFam(const Data& data) {
+    std::vector<int> famIndex(data.nbFam); 
+    std::iota(famIndex.begin(), famIndex.end(), 0); // fill with 0, 1, 2, ...
+}
