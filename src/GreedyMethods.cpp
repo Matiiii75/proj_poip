@@ -43,4 +43,5 @@ void shuffleVector(std::vector<int>& vec, std::mt19937& g) {
 std::vector<int> genRandomOrderFam(const Data& data) {
     std::vector<int> famIndex(data.nbFam); 
     std::iota(famIndex.begin(), famIndex.end(), 0); // fill with 0, 1, 2, ...
+    return famIndex; 
 }
