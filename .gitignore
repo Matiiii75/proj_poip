@@ -1,9 +1,12 @@
 # Objets
 src/*.o
 
-#ignorer main
+# ignorer main
 src/main.cpp
 src/main2.cpp
+
+# Ignorer Datas 
+data/
 
 # Tout fichier sans extension dans src = exécutable
 src/*
