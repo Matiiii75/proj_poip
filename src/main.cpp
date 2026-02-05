@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
     std::cout << "sol value : " << solVal << std::endl; 
 
     std::vector<std::pair<int,int>> defIntervals; 
-    defIntervals = getDefIntervals(data,sol); 
+    // defIntervals = getDefIntervals(data,so); 
 
     for(int i = 0; i < (int)defIntervals.size(); ++i) {
         std::cout << "famille : " << i << " intervalle : " << defIntervals[i].first << "," << defIntervals[i].second << std::endl;

@@ -17,12 +17,14 @@ int main(int argc, char* argv[]) {
     new_cap = data.initCapRacksAer();
 
     Solution sol = initSol(data);
-    sol.displaySolution(numInstance);  // write sol in file 
+    // sol.displaySolution(numInstance);  // write sol in file 
 
     int solVal = computeSolValue(sol, data); 
     std::cout << "sol value : " << solVal << std::endl; 
 
     GradientBestImprov(data, sol, solVal);     
+
+    sol.displaySolution(numInstance); // écrire solution
    
     return 0; 
 }
