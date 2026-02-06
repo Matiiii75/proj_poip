@@ -15,6 +15,7 @@ src/*
 !src/*.h
 !src/*.hpp
 !src/*.md
+!src/*.ipynb
 !src/
 
 cmd_exec.txt
