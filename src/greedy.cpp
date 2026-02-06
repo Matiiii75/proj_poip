@@ -42,12 +42,11 @@ Solution coiGreedy(const Data& data){
             while(!place){ //iterate while p isn't place
 
                 if (rack >= data.nbRacks) { 
-                    throw std::runtime_error("Impossible to place the product: no more available racks.");
+                    throw std::runtime_error("Product placement failed: no racks available");
                 }
 
                 if((int) sol.RackToProd[rack].size() + 1 <= capRacksAer[rack]){ // if there is the space in rack for a new product
-                    sol.prodToRack[p]= rack; sol.RackToProd[rack].push_back(p); //update sol
-                    place = true; //update bolean value : p is place
+                    sol.prodToRack[p]= rack; sol.RackToProd[rack].push_back(p); place = true; //update sol and bolean value : p is place
                 }else{++rack;} // if there isn't enough of space : pass to next rack                     
             }
         }
@@ -70,15 +69,14 @@ Solution coiGreedyAmelioration(const Data& data){
             bool place = false; // bolean saying if p is place in a rack : initialize to false
 
 
-            while(!place){ //iterate while p isn't place
+            while(!place){ // iterate while p isn't place
 
                 if (rack >= data.nbRacks) {
-                    throw std::runtime_error("Impossible de placer le produit : plus de racks disponibles");
+                    throw std::runtime_error("Product placement failed: no racks available");
                 }
 
                 if((int) sol.RackToProd[rack].size() + 1 <= capRacksAer[rack]){ // if there is the space in rack for a new product
-                    sol.prodToRack[p]= rack; sol.RackToProd[rack].push_back(p); //update sol
-                    place = true; //update bolean value : p is place
+                    sol.prodToRack[p]= rack; sol.RackToProd[rack].push_back(p); place = true; //update sol and bolean value : p is place  
                 }else{++rack;} // if there isn't enough of space : pass to next rack                     
             }
         }
@@ -96,8 +94,8 @@ Solution initSol(const Data& data) {
 
     std::vector<int> newCapRack = data.initCapRacksAer(); 
 
-    for(int i = 0; i < data.nbFam; ++i) { // pr chaque famille
-        for(const auto& prod : data.fam.famToProd[i]) { // pr chaque produit de cette famille
+    for(int i = 0; i < data.nbFam; ++i) { // for each familiy
+        for(const auto& prod : data.fam.famToProd[i]) { // for each product in this famiily
             
             int lastLocSeen = 0; 
             for(int j = lastLocSeen; j < data.nbRacks; ++j) { //  iterate over every rack from 0
@@ -118,3 +116,44 @@ Solution initSol(const Data& data) {
     return sol; 
 }
 
+Solution initSolRandom(const Data& data){
+
+    std::random_device rd; std::mt19937 gen(rd());
+
+    Solution sol;
+    sol.RackToProd.resize(data.nbRacks); sol.prodToRack.resize(data.nbProd); //init sol sizes
+
+    std::vector<int> newCapRack = data.initCapRacksAer(); 
+
+    std::vector<int> orderFam = genRandomOrderFam(data);
+
+    std::vector<std::vector<int>> OrderProd(data.nbFam);
+
+    for(int f = 0 ; f < data.nbFam; ++f){ // for each family
+        OrderProd[f].assign(data.fam.famToProd[f].begin(),data.fam.famToProd[f].end()); //convert unordered_set in vector
+        shuffleVector(OrderProd[f], gen); // create a random order of th pruduct of the family
+    }
+
+    int rack = 1; // initialize current rack 
+
+    for(int i = 0; i < data.nbFam; ++i){
+        for(int j = 0; j < (int) OrderProd[i].size(); ++j){
+            int prod = OrderProd[i][j]; //get product at index j for family in index i
+            
+            bool place = false; // bolean saying if prod is place in a rack : initialize to false
+            while(!place){
+                if (rack >= data.nbRacks) 
+                    throw std::runtime_error("Product placement failed: no racks available");
+
+                if((int) sol.RackToProd[rack].size() + 1 <= newCapRack[rack]){ // if there is the space in rack for a new product
+                    sol.prodToRack[prod]= rack; sol.RackToProd[rack].push_back(prod); place = true; //update sol and bolean value : p is place//update bolean value : p is place    
+                }else{++rack;} // if there isn't enough of space : pass to next rack                     
+            }
+        }
+    }
+
+    return sol;
+}
+
+    
+    
