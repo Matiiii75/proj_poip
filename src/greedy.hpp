@@ -1,6 +1,7 @@
 #pragma once 
 
 #include "Datas.hpp"
+#include "GreedyMethods.hpp"
 #include <map>
 
 struct Coi{
@@ -29,3 +30,5 @@ Solution coiGreedy(const Data& data);
 Solution coiGreedyAmelioration(const Data& data);
 
 Solution initSol(const Data& data);
+
+Solution initSolRandom(const Data& data);
