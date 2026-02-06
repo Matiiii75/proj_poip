@@ -37,6 +37,7 @@ struct allFiles {
     std::string f1,f2,f3,f4,f5,f6; 
     void computeAllFiles(int numInstance); 
 };
+
 struct Solution{
 
     /* ATTRIBUTES */

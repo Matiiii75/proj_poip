@@ -5,22 +5,22 @@
 
 void orderAndRacks::computeOrderAndRacks(const Solution& sol, const Data& data) {
 
-    orderToRacks.resize(data.nbOrd); 
-        orderOccurRacks.resize(data.nbOrd, std::vector<int>(data.nbRacks, 0)); 
+    orderToRacks.assign(data.nbOrd, {}); 
+    orderOccurRacks.assign(data.nbOrd, std::vector<int>(data.nbRacks, 0)); 
 
-        for(int o = 0; o < data.nbOrd; ++o) { // pr chq order
-            for(const int& prod : data.ords.ordsToProd[o]) { // pr chq prod ds order
+    for(int o = 0; o < data.nbOrd; ++o) { // for each order 
+        for(const int& prod : data.ords.ordsToProd[o]) { // for each prod in o
 
-                int prodRack = sol.prodToRack[prod]; // récup rack
-                
-                if(orderOccurRacks[o][prodRack] == 0) // si la clé prodRack existait pas -> ajout et valeur à 1 puis insertion dans set
-                    orderToRacks[o].insert(prodRack); // ajt le rack 
-                
-                orderOccurRacks[o][prodRack]++; // incrémente 
-
-            }
+            int prodRack = sol.prodToRack[prod]; // get rack
+            
+            if(orderOccurRacks[o][prodRack] == 0) // if prodrack didnt exist : 
+                orderToRacks[o].push_back(prodRack); // add rack
+            
+            orderOccurRacks[o][prodRack]++; // incrémente 
         }
 
+        std::sort(orderToRacks[o].begin(), orderToRacks[o].end()); 
+    }
 }
 
 /* end orderAndRacks methods */
@@ -178,23 +178,30 @@ int findFamProdInRack(int rack, int fam, const Solution& sol, const Data& data) 
 
 std::pair<int,int> findNeighsRack(int rack, int order, const orderAndRacks& oAr, const Data& data) {
 
-    const std::set<int>& orderRacks = oAr.orderToRacks[order]; // alias for speed
-    auto itSuccessor = orderRacks.lower_bound(rack); // lower_bound find 1st element >= rack
+    const std::vector<int>& orderRacks = oAr.orderToRacks[order]; // alias for speed
+    auto itSuccessor = std::lower_bound(orderRacks.begin(), orderRacks.end(), rack); 
 
     int prevRack = 0;  // begin depot by default
     int nextRack = data.nbRacks - 1; // final depot by default 
 
-    if(itSuccessor != orderRacks.end()) // find successor (1st rack after rack)
-        nextRack = *itSuccessor; 
+    if(itSuccessor != orderRacks.end()) { // if we found one 
+        if(*itSuccessor == rack) { // if iterator point on rack
+            auto itNext = std::next(itSuccessor); // get next rack on righ
+            if(itNext != orderRacks.end()) // if we find one on the right 
+                nextRack = *itNext; 
+            // (else nextRack is final depot by default)
+        } else nextRack = *itSuccessor; // point on element > rack
+    }
 
-    if(itSuccessor != orderRacks.begin()) // find predecessor (1st rack before rack)
-        prevRack = *std::prev(itSuccessor); 
+    if(itSuccessor != orderRacks.begin()) // if not first rack in order 
+        prevRack = *std::prev(itSuccessor); // get previous rack 
 
     return {prevRack, nextRack}; 
 }
 
 int computeCurrRackImpact(int order, int currRack, const orderAndRacks& oAr, const Data& data) {
 
+    if(oAr.orderOccurRacks[order][currRack] > 1) throw std::runtime_error("error in computeCurrRackImpact"); 
     std::pair<int,int> encadrants = findNeighsRack(currRack, order, oAr, data); // find surrounding racks
     int currVal = data.dists[encadrants.first][currRack] + data.dists[currRack][encadrants.second]; 
     int newVal = data.dists[encadrants.first][encadrants.second]; 
@@ -203,12 +210,49 @@ int computeCurrRackImpact(int order, int currRack, const orderAndRacks& oAr, con
 }
 
 int computeAddRackImpact(int order, int newRack, const orderAndRacks& oAr, const Data& data) {
- 
+    
+    if(oAr.orderOccurRacks[order][newRack] > 0) throw std::runtime_error("error in computeAddRackImpact"); 
     std::pair<int,int> encadrants = findNeighsRack(newRack, order, oAr, data); // find surroundings 
     int currVal = data.dists[encadrants.first][encadrants.second]; 
     int newVal = data.dists[encadrants.first][newRack] + data.dists[newRack][encadrants.second]; 
 
     return currVal - newVal; //! old - new -> better if > 0
+}
+
+int computeSpecialCase(int order, int rack1, int rack2, const orderAndRacks& oAr, const Data& data) {
+
+    int Delta = 0; 
+    std::pair<int,int> rack1Neighs = findNeighsRack(rack1, order, oAr, data); // compute R1 neighs
+
+    if(rack2 > rack1Neighs.first && rack2 < rack1) { // if rack2 is in ]rack1neighs.min, rack1[
+        
+        Delta += data.dists[rack1Neighs.first][rack1] + data.dists[rack1][rack1Neighs.second]; 
+        Delta -= data.dists[rack1Neighs.first][rack2] + data.dists[rack2][rack1Neighs.second]; 
+
+    }
+
+    else if(rack2 < rack1Neighs.second && rack2 > rack1) { // if rack2 is in ]rack1, rack1neighs.max[
+
+        Delta += data.dists[rack1Neighs.first][rack1] + data.dists[rack1][rack1Neighs.second]; 
+        Delta -= data.dists[rack1Neighs.first][rack2] + data.dists[rack2][rack1Neighs.second]; 
+
+    }
+
+    else { // if rack2 isn't in ]rack1neighs.min, rack1neighs.max[ (usual case)
+
+        std::pair<int,int> rack2Neighs = findNeighsRack(rack2, order, oAr, data); // compute R2 neighs
+
+        // compute rack1 go throught and erase impact
+        Delta += data.dists[rack1Neighs.first][rack1] + data.dists[rack1][rack1Neighs.second]; 
+        Delta -= data.dists[rack1Neighs.first][rack1Neighs.second]; 
+
+        // compute rack2 erase and go throught impact 
+        Delta += data.dists[rack2Neighs.first][rack2Neighs.second]; 
+        Delta -= data.dists[rack2Neighs.first][rack2] + data.dists[rack2][rack2Neighs.second]; 
+
+    }
+
+    return Delta; 
 }
 
 int computeDeltaSwap(int prod1, int prod2, const Data& data, const orderAndRacks& oAr, int prod1Rack, int prod2Rack) {
@@ -232,8 +276,7 @@ int computeDeltaSwap(int prod1, int prod2, const Data& data, const orderAndRacks
         }
 
         if(countRack1 == 1 && countRack2 == 0) { // impact on begin and end
-            totalDelta += computeCurrRackImpact(o, prod1Rack, oAr, data);
-            totalDelta += computeAddRackImpact(o, prod2Rack, oAr, data); 
+            totalDelta += computeSpecialCase(o, prod1Rack, prod2Rack, oAr, data); 
             continue; 
         } 
 
@@ -261,8 +304,7 @@ int computeDeltaSwap(int prod1, int prod2, const Data& data, const orderAndRacks
         }
 
         if(countRack2 == 1 && countRack1 == 0) { 
-            totalDelta += computeCurrRackImpact(o, prod2Rack, oAr, data);
-            totalDelta += computeAddRackImpact(o, prod1Rack, oAr, data); 
+            totalDelta += computeSpecialCase(o, prod2Rack, prod1Rack, oAr, data); 
             continue; 
         } 
 
@@ -293,8 +335,7 @@ int computeDeltaSend(int prod1, int prod1Rack, int newRack, const Data& data, co
         }
 
         if(countRack1 == 1 && countNewRack == 0) { // impact on begin & end
-            totalDelta += computeCurrRackImpact(o, prod1Rack, oAr, data); 
-            totalDelta += computeAddRackImpact(o, newRack, oAr, data); 
+            totalDelta += computeSpecialCase(o, prod1Rack, newRack, oAr, data); 
             continue; 
         }
 
@@ -307,13 +348,20 @@ int computeDeltaSend(int prod1, int prod1Rack, int newRack, const Data& data, co
     return totalDelta; //! old - new -> better if > 0
 }
 
+void debug(const std::vector<int>& vec) {
+    for(int i = 0; i < (int)vec.size()-1; ++i) {
+        if(vec[i] >= vec[i+1]) {
+            for(const int& i : vec) std::cout << i << " "; 
+            std::cout << std::endl;
+            throw std::runtime_error("ATTENTION"); 
+        }
+    }
+}
 
 void applyMove(const BestSwap& bestSwap, Solution& bestSol, 
     int& bestVal, famSolInfos& fsi, aisleInfos& aInfos, 
     orderAndRacks& oAr, const Data& data)   
-{
-
-    const 
+{ 
 
     int delta = bestSwap.bestDelta; 
     int prod1 = bestSwap.prod1ToProd2.first; 
@@ -341,10 +389,10 @@ void applyMove(const BestSwap& bestSwap, Solution& bestSol,
     for(const int& o : data.ords.prodToOrds[prod1]) { // for each order containing prod1
 
         if(--oAr.orderOccurRacks[o][prod1Rack] == 0) // decrement, and if reaching 0 :
-            oAr.orderToRacks[o].erase(prod1Rack); // erase from set 
+            eraseSortedVec(prod1Rack, oAr.orderToRacks[o]); // erase from vec  
         
         if(++oAr.orderOccurRacks[o][prod2Rack] == 1) // increment, and if reaching 1 
-            oAr.orderToRacks[o].insert(prod2Rack); // means we just added rack to o
+            addSortedVec(prod2Rack, oAr.orderToRacks[o]); // means we just added rack to o
 
     }
         
@@ -353,10 +401,10 @@ void applyMove(const BestSwap& bestSwap, Solution& bestSol,
         for(const int& o : data.ords.prodToOrds[prod2]) { // for each order containing prod2 
 
             if(--oAr.orderOccurRacks[o][prod2Rack] == 0) // decrement, and if reaching 0 : 
-                oAr.orderToRacks[o].erase(prod2Rack); // erase from set
+                eraseSortedVec(prod2Rack, oAr.orderToRacks[o]); // erase from set
             
             if(++oAr.orderOccurRacks[o][prod1Rack] == 1) // increment and if reaching 1 
-                oAr.orderToRacks[o].insert(prod1Rack); // means we just added rack to o 
+                addSortedVec(prod1Rack, oAr.orderToRacks[o]); // means we just added rack to o 
 
         }
 
@@ -444,11 +492,10 @@ void applyMove(const BestSwap& bestSwap, Solution& bestSol,
     /* END ACTUALIZE DEFINTERVALS */
 
     /* ACTUALIZE BESTVAL */
-
+    
     bestVal -= bestSwap.bestDelta; 
 
 }
-
 
 void GradientBestImprov(const Data& data, Solution& bestSol, int& bestVal) {
 
@@ -497,7 +544,7 @@ void GradientBestImprov(const Data& data, Solution& bestSol, int& bestVal) {
                     enoughCap = rackCapEnough(data, bestSol, newPos); // check if enough Cap in newPos rack to send prod
                     
                     if(enoughCap) { // if enough cap to send prod 
-                            
+                        
                         if(enoughAer) { // if sending prod respect aeration
                             
                             int Delta = computeDeltaSend(prod, prodRack, newPos, data, orderAndRacks); // simulate send 
@@ -507,6 +554,7 @@ void GradientBestImprov(const Data& data, Solution& bestSol, int& bestVal) {
                                 bestSwap.bestDelta = Delta; 
                                 bestSwap.prod1ToProd2 = {prod, -1}; // memo swap
                                 bestSwap.rack1ToRack2 = {prodRack, newPos};
+
                             }
 
                             continue; // -> next iteration
@@ -515,7 +563,7 @@ void GradientBestImprov(const Data& data, Solution& bestSol, int& bestVal) {
                         if(!enoughAer) { // if sending prod do not respect aeration
                              
                             int sameFamProd = findFamProdInRack(newPos, f, bestSol, data); // search sam fame other product
-                            if(sameFamProd == -1) continue; // if no sam fam prod found -> skip
+                            if(sameFamProd == -1) continue; // if no same fam prod found -> skip
                             // simulate trade 
                             int Delta = computeDeltaSwap(prod, sameFamProd, data, orderAndRacks, prodRack, newPos); 
                             
@@ -560,4 +608,119 @@ void GradientBestImprov(const Data& data, Solution& bestSol, int& bestVal) {
         std::cout << "solval : " << bestVal << std::endl;
 
     }
+}
+
+void firstImprovLocalSearch(const Data& data, Solution& bestSol, int& bestVal) {
+
+    std::random_device rd; // create random generator
+    std::mt19937 g(rd()); 
+
+    std::vector<int> famIndex = genRandomOrderFam(data); // compute random order of family index
+
+    aisleInfos aInfos; 
+    aInfos.computeRackToAisle(data);
+    aInfos.computeAisleCap(data);       // computing aisle informations 
+    aInfos.computeAisleAer(data);       // (capacities, aeration, remaining capacities, etc..)
+    aInfos.computeAisleRemainCap(data,bestSol); 
+
+    orderAndRacks orderAndRacks; // initiate order and racks relations
+    orderAndRacks.computeOrderAndRacks(bestSol, data); 
+
+    famSolInfos fsi; 
+    fsi.computeFamInterFamOrd(data, bestSol); // compute famInterval & famOrder in bestSol
+    fsi.computeDefIntervals(data, bestSol); // compute families defIntervals relative to bestSol
+
+    bool improved = true; 
+    int z = 0; 
+    while(improved) {
+        
+        improved = false; 
+        BestSwap bestSwap; 
+        shuffleVector(famIndex, g); // shuffle fam index order to loop on
+
+        for(const int& f : famIndex) { // for each fam 
+            for(const int& prod : data.fam.famToProd[f]) { // for each prod of fam f 
+
+                int prodRack = bestSol.prodToRack[prod]; // get rack containing prod 
+                int rackAisle = aInfos.rackToAisle[prodRack]; // get aisle containing prodRack 
+                
+                int fmin = fsi.defIntervals[f].first; // get defInterval of f 
+                int fmax = fsi.defIntervals[f].second; 
+
+                for(int newPos = fmin; newPos <= fmax; ++newPos) { // for each position in defIntervals 
+                    if(newPos == prodRack) continue; // if same rack -> skip
+
+                    bool enoughCap, enoughAer;
+                    int newPosAisle = aInfos.rackToAisle[newPos]; // get newPos's aisle
+
+                    if(newPosAisle == rackAisle) 
+                        enoughAer = true; // have enough aer since we stay in same aisle & don't add anything
+                    else enoughAer = aInfos.aisleAerEnough(newPosAisle); // check if enough aer in newPos's aisle to send prod
+                    enoughCap = rackCapEnough(data, bestSol, newPos); // check if enough Cap in newPos rack to send prod
+
+                    if(enoughCap) { // if enough cap to send prod
+
+                        if(enoughAer) { // if sending prod respect aeration 
+
+                            int Delta = computeDeltaSend(prod, prodRack, newPos, data, orderAndRacks); // simulate send
+
+                            if(Delta > bestSwap.bestDelta) {// if improvement -> applymove directly
+                            
+                                bestSwap.bestDelta = Delta; 
+                                bestSwap.prod1ToProd2 = {prod, -1}; // memo swap
+                                bestSwap.rack1ToRack2 = {prodRack, newPos};
+                                goto next_iteration; // go applyMove & pass to next iteration
+                            }
+
+                            continue; // -> next iteration
+                        }
+                        
+                        if(!enoughAer) { // if sending prod do not respect aeration 
+
+                            int sameFamProd = findFamProdInRack(newPos, f, bestSol, data); 
+                            if(sameFamProd == -1) continue; // if no same fam prod found -> skip
+                            // simulate trade 
+                            int Delta = computeDeltaSwap(prod, sameFamProd, data, orderAndRacks, prodRack, newPos);
+                            
+                            if(Delta > bestSwap.bestDelta) {// if improvement -> applymove directly 
+
+                                bestSwap.bestDelta = Delta; 
+                                bestSwap.prod1ToProd2 = {prod, sameFamProd}; // memo swap
+                                bestSwap.rack1ToRack2 = {prodRack, newPos};
+                                goto next_iteration; // go applyMove & pass to next iteration
+                            }
+
+                            continue; // -> next iteration 
+                        }
+
+                    }
+
+                    if(!enoughCap) { // if not enough cap in rack to send prod 
+
+                        int sameFamProd = findFamProdInRack(newPos,f, bestSol, data); // search for same fam other prod 
+                        if(sameFamProd == -1) continue; // if not found -> skip
+                        // simulate trade
+                        int Delta = computeDeltaSwap(prod, sameFamProd, data, orderAndRacks, prodRack, newPos); 
+                        if(Delta > bestSwap.bestDelta) {
+
+                            bestSwap.bestDelta = Delta; 
+                            bestSwap.prod1ToProd2 = {prod, sameFamProd}; // memo swap
+                            bestSwap.rack1ToRack2 = {prodRack, newPos};
+                            goto next_iteration; // go applyMove & pass to next iteration
+                        }  
+                    }
+                }
+            }
+        }
+
+        next_iteration: 
+        if(bestSwap.prod1ToProd2.first != -1) {
+            applyMove(bestSwap, bestSol, bestVal, fsi, aInfos, orderAndRacks, data); 
+            improved = true; 
+        }
+
+        std::cout << "solVal : " << bestVal << std::endl; 
+        if(++z > 20000) break; 
+    }
+
 }

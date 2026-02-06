@@ -6,10 +6,10 @@
 
 struct orderAndRacks {
 
-    std::vector<std::set<int>> orderToRacks;
+    std::vector<std::vector<int>> orderToRacks;
     std::vector<std::vector<int>> orderOccurRacks; 
     void computeOrderAndRacks(const Solution& sol, const Data& data); // construction orderToRacks & orderOccurRakcs
-
+    
 };
 
 /**
@@ -123,6 +123,8 @@ int computeCurrRackImpact(int order, int currRack, const orderAndRacks& oAr, con
  */
 int computeAddRackImpact(int order, int newRack, const orderAndRacks& oAr, const Data& data); 
 
+int computeSpecialCase(int order, int rack1, int rack2, const orderAndRacks& oAr, const Data& data); 
+
 /**
  * @brief compute delta induced by swapping two products 
  * @param prod1 product 1 
@@ -177,5 +179,8 @@ void applyMove(const BestSwap& bestSwap, Solution& bestSol,
  */
 void GradientBestImprov(const Data& data, Solution& bestSol, int& bestVal); 
 
-
+/**
+ * @brief compute local search with best improvement policy 
+ */
+void firstImprovLocalSearch(const Data& data, Solution& bestSol, int& bestVal); 
 

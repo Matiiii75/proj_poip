@@ -45,3 +45,20 @@ std::vector<int> genRandomOrderFam(const Data& data) {
     std::iota(famIndex.begin(), famIndex.end(), 0); // fill with 0, 1, 2, ...
     return famIndex; 
 }
+
+/**
+ * @brief add element in increasing order sorted vector
+ */
+void addSortedVec(int x, std::vector<int>& v) {
+    auto it = std::lower_bound(v.begin(), v.end(), x); 
+    if(it != v.end() && *it == x) throw std::runtime_error("problem in addSortedVec"); 
+    v.insert(it, x); 
+}
+
+/**
+ * @brief erase element of increasing order sorted vector
+ */
+void eraseSortedVec(int x, std::vector<int>& v) {
+    auto it = std::lower_bound(v.begin(), v.end(), x); // seek LB of x 
+    if(it != v.end() && *it == x) v.erase(it); // if found x -> erase 
+}
