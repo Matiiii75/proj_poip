@@ -27,6 +27,7 @@ struct Familly {
 struct Orders {
     std::vector<std::unordered_set<int>> ordsToProd; // fastly check products associated to orders
     std::vector<std::unordered_set<int>> prodToOrds; // fastly check orders associated to product
+    std::vector<std::vector<bool>> isProdInOrd; // for better performance //! MIGHT DELETE ordsToProd at term ??? 
     void displayData(); 
 };
 
@@ -89,5 +90,7 @@ struct Data {
     std::vector<int> initCapRacksAer() const; // assign initial empty racks in order to respect aeration constr
 
     void throwErrorFile(const std::string& where); // throw error and display where it happened
+
+    void computeIsProdInOrd(); // ! A REVOIR
 }; 
 

@@ -22,7 +22,9 @@ int main(int argc, char* argv[]) {
     int solVal = computeSolValue(sol, data); 
     std::cout << "sol value : " << solVal << std::endl; 
 
-    GradientBestImprov(data, sol, solVal);     
+    data.computeIsProdInOrd(); // pre compute boolean matrix sayin faslty if prod is in order o
+
+    firstImprovLocalSearch(data, sol, solVal);     
 
     sol.displaySolution(numInstance); // écrire solution
    

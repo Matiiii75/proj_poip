@@ -264,7 +264,7 @@ int computeDeltaSwap(int prod1, int prod2, const Data& data, const orderAndRacks
         int countRack1 = oAr.orderOccurRacks[o][prod1Rack]; // memo 
         int countRack2 = oAr.orderOccurRacks[o][prod2Rack]; 
 
-        if(data.ords.ordsToProd[o].count(prod2) > 0) 
+        if(data.ords.isProdInOrd[o][prod2]) // true if prod2 in o 
             continue; // if prod1 & prod 2 in same order, swapping them don't impact
         
         if(countRack1 > 1 && countRack2 >= 1) 
@@ -292,7 +292,7 @@ int computeDeltaSwap(int prod1, int prod2, const Data& data, const orderAndRacks
         int countRack1 = oAr.orderOccurRacks[o][prod1Rack]; 
         int countRack2 = oAr.orderOccurRacks[o][prod2Rack];
 
-        if(data.ords.ordsToProd[o].count(prod1) > 0) 
+        if(data.ords.isProdInOrd[o][prod1] > 0) 
             continue; 
 
         if(countRack2 > 1 && countRack1 >= 1) 
@@ -624,14 +624,14 @@ void firstImprovLocalSearch(const Data& data, Solution& bestSol, int& bestVal) {
     aInfos.computeAisleRemainCap(data,bestSol); 
 
     orderAndRacks orderAndRacks; // initiate order and racks relations
-    orderAndRacks.computeOrderAndRacks(bestSol, data); 
+    orderAndRacks.computeOrderAndRacks(bestSol, data);  
 
     famSolInfos fsi; 
     fsi.computeFamInterFamOrd(data, bestSol); // compute famInterval & famOrder in bestSol
     fsi.computeDefIntervals(data, bestSol); // compute families defIntervals relative to bestSol
 
     bool improved = true; 
-    int z = 0; 
+    
     while(improved) {
         
         improved = false; 
@@ -720,7 +720,7 @@ void firstImprovLocalSearch(const Data& data, Solution& bestSol, int& bestVal) {
         }
 
         std::cout << "solVal : " << bestVal << std::endl; 
-        if(++z > 20000) break; 
+
     }
 
 }

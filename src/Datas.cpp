@@ -35,7 +35,6 @@ void Orders::displayData() {
     std::cout << std::endl << std::endl;
 }
 
-
 void allFiles::computeAllFiles(int numInstance) {
  
     std::string n1,n2,n3,n4,n5,n6;
@@ -56,7 +55,6 @@ void allFiles::computeAllFiles(int numInstance) {
 
 }
 
-
 void Solution::displaySolution(int numInstance) {
 
     // compute path from numInstance 
@@ -76,7 +74,6 @@ void Solution::displaySolution(int numInstance) {
     write.close(); // close output file
 
 }
-
 
 void Data::readMetaData(const std::string& f1) {
 
@@ -243,7 +240,19 @@ std::vector<int> Data::initCapRacksAer() const {
     return racksCapCopy; // return new capacity of racks; wich determine implicitely wich racks are lock for aeration
 }
 
-
 void Data::throwErrorFile(const std::string& where) {
     throw std::runtime_error("Couldn't open file at " + where);
+}
+
+// ! A RE CONSIDERER
+/**
+ * @brief compute matrix of boleans where isProdInOrd[o][prod] = true if prod is in order o
+ * @warning must be pre computed in main if data are const given in method (such as gradient) argument
+ */
+void Data::computeIsProdInOrd() {
+    ords.isProdInOrd.assign(nbOrd, std::vector<bool>(nbProd, false)); 
+    for(int o = 0; o < nbOrd; ++o) {
+        for(const int& prod : ords.ordsToProd[o]) 
+            ords.isProdInOrd[o][prod] = true; 
+    }
 }

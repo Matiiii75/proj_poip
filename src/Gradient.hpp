@@ -105,7 +105,7 @@ int findFamProdInRack(int rack, int fam, const Solution& sol, const Data& data);
 std::pair<int,int> findNeighsRack(int rack, int order, const orderAndRacks& oAr, const Data& data); 
 
 /**
- * @brief compute the impact one position has on the soltion cost 
+ * @brief compute the impact one position has on the solution cost 
  * @brief so, it computes the cost passing by currRack and the cost without passing. 
  * @param order order for wich we compute the cost 
  * @param currRack rack containing the produc
@@ -123,6 +123,16 @@ int computeCurrRackImpact(int order, int currRack, const orderAndRacks& oAr, con
  */
 int computeAddRackImpact(int order, int newRack, const orderAndRacks& oAr, const Data& data); 
 
+/**
+ * @brief compute the impact of a very specific movement : deleting a rack of the solution and adding a new one instead by moving a product
+ * @param order order ID 
+ * @param rack1 current position we are about to erase 
+ * @param rack new position we are considering 
+ * @param oAr orders and rack structure 
+ * @param data problem data
+ * @note take particulary attention to the case we're moving a product 
+ * to a position nearer than it's neighbors in current solution
+ */
 int computeSpecialCase(int order, int rack1, int rack2, const orderAndRacks& oAr, const Data& data); 
 
 /**
@@ -181,6 +191,12 @@ void GradientBestImprov(const Data& data, Solution& bestSol, int& bestVal);
 
 /**
  * @brief compute local search with best improvement policy 
+ * @param data problem data 
+ * @param bestSol initial solution
+ * @param bestVal initial solution value 
+ * @note bestSol & bestVal must be precomputed 
+ * @note results will be passed by reference on bestSol & bestVal 
+ * @note no stopping criterion except "no improvement found over on iteration"
  */
 void firstImprovLocalSearch(const Data& data, Solution& bestSol, int& bestVal); 
 
