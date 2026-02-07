@@ -1,10 +1,6 @@
 # Objets
 src/*.o
 
-# ignorer main
-src/main.cpp
-src/main2.cpp
-
 # Ignorer Datas 
 data/
 
@@ -17,5 +13,9 @@ src/*
 !src/*.md
 !src/*.ipynb
 !src/
+
+# ignorer main
+src/main.cpp
+src/main2.cpp
 
 cmd_exec.txt
