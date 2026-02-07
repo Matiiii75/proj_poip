@@ -85,7 +85,6 @@ Solution coiGreedyAmelioration(const Data& data){
     return sol;
 }
 
-
 Solution initSol(const Data& data) {
 
     Solution sol; 

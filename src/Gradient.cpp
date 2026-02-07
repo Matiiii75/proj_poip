@@ -60,8 +60,7 @@ void aisleInfos::computeAisleCap(const Data& data) {
 void aisleInfos::computeAisleAer(const Data& data) {
 
     aisleAer.resize(data.nbAisle); 
-    for(int i = 0; i < data.nbAisle; ++i) { // for each aisle 
-        int cap = aisleCap[i]; 
+    for(int i = 0; i < data.nbAisle; ++i) { // for each aisle  
         aisleAer[i] = std::ceil(aisleCap[i]*(data.aeration/100.0)); // compute aer
     } 
 
@@ -131,7 +130,7 @@ void famSolInfos::computeDefIntervals(const Data& data, const Solution& sol) {
             
             int prevFam = famOrder[i-1]; // get family preceding curr one in order 
             int prevFamLastRack = famIntervals[prevFam].second; // get family succeding curr one in order 
-            if(sol.RackToProd[prevFamLastRack].size() < data.capRacks[prevFamLastRack]) // if enough place in last rack of predfamily
+            if((int)sol.RackToProd[prevFamLastRack].size() < data.capRacks[prevFamLastRack]) // if enough place in last rack of predfamily
                 defIntervals[currFam].first = prevFamLastRack; // define min bound of currfam as prevFamLastRack
             else // if no space -> place it on very next one 
                 defIntervals[currFam].first = prevFamLastRack + 1;  // define min bound of currFam as prevFamLastRack + 1
@@ -141,7 +140,7 @@ void famSolInfos::computeDefIntervals(const Data& data, const Solution& sol) {
             
             int nextFam = famOrder[i+1]; // next family in order
             int nextFam1stRack = famIntervals[nextFam].first; // 1st rack in nextFam
-            if(sol.RackToProd[nextFam1stRack].size() < data.capRacks[nextFam1stRack]) // if enough space
+            if((int)sol.RackToProd[nextFam1stRack].size() < data.capRacks[nextFam1stRack]) // if enough space
                 defIntervals[currFam].second = nextFam1stRack; // curr Fam max bound = next fam 1st rack
             else // else stop rack just before 
                 defIntervals[currFam].second = nextFam1stRack - 1;
@@ -363,7 +362,6 @@ void applyMove(const BestSwap& bestSwap, Solution& bestSol,
     orderAndRacks& oAr, const Data& data)   
 { 
 
-    int delta = bestSwap.bestDelta; 
     int prod1 = bestSwap.prod1ToProd2.first; 
     int prod2 = bestSwap.prod1ToProd2.second;
     int prod1Rack = bestSwap.rack1ToRack2.first; 
@@ -470,7 +468,7 @@ void applyMove(const BestSwap& bestSwap, Solution& bestSol,
         int contactPoint = fsi.famIntervals[famProd1].first; // new famProd1's rack far left 
         
         // if contactPoint rack between two fams isn't empty -> predFam can go there
-        if(bestSol.RackToProd[contactPoint].size() < data.capRacks[contactPoint])
+        if((int)bestSol.RackToProd[contactPoint].size() < data.capRacks[contactPoint])
             fsi.defIntervals[predFam].second = contactPoint; 
         else // else, stop right before 
             fsi.defIntervals[predFam].second = contactPoint - 1; 
@@ -482,7 +480,7 @@ void applyMove(const BestSwap& bestSwap, Solution& bestSol,
         int contactPoint = fsi.famIntervals[famProd1].second; // new famProd1's rack far right
 
         // if contactPoint rack between two fams isn't empty -> predFam can go there
-        if(bestSol.RackToProd[contactPoint].size() < data.capRacks[contactPoint])
+        if((int)bestSol.RackToProd[contactPoint].size() < data.capRacks[contactPoint])
             fsi.defIntervals[succFam].first = contactPoint; 
         else // else, stop right before 
             fsi.defIntervals[succFam].first = contactPoint + 1; 
@@ -649,6 +647,7 @@ void firstImprovLocalSearch(const Data& data, Solution& bestSol, int& bestVal) {
 
                 for(int newPos = fmin; newPos <= fmax; ++newPos) { // for each position in defIntervals 
                     if(newPos == prodRack) continue; // if same rack -> skip
+                    // if(aInfos.rackToAisle[newPos] == rackAisle) continue; // ! TEST : ignorer si les deux rack sont dans la meme allée
 
                     bool enoughCap, enoughAer;
                     int newPosAisle = aInfos.rackToAisle[newPos]; // get newPos's aisle

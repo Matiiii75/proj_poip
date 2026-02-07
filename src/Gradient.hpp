@@ -47,7 +47,7 @@ struct BestSwap {
     int bestDelta; // register delta associated to swap
     std::pair<int,int> prod1ToProd2; // products to move (either swap or send).prod2 = -1 if it's a send 
     std::pair<int,int> rack1ToRack2; // origin rack and final rack 
-    BestSwap() : prod1ToProd2({-1,-1}), rack1ToRack2({-1,-1}), bestDelta(0) {} // default constructor 
+    BestSwap() : bestDelta(0), prod1ToProd2({-1,-1}), rack1ToRack2({-1,-1}) {} // default constructor 
 
 }; 
 
