@@ -629,7 +629,7 @@ void firstImprovLocalSearch(const Data& data, Solution& bestSol, int& bestVal) {
     fsi.computeDefIntervals(data, bestSol); // compute families defIntervals relative to bestSol
 
     bool improved = true; 
-    
+    int z = 0; 
     while(improved) {
         
         improved = false; 
@@ -719,7 +719,7 @@ void firstImprovLocalSearch(const Data& data, Solution& bestSol, int& bestVal) {
         }
 
         std::cout << "solVal : " << bestVal << std::endl; 
-
+        // if(++z > 10000) break; 
     }
 
 }
