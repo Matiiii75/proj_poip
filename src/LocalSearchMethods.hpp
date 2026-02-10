@@ -4,11 +4,18 @@
 #include "greedy.hpp"
 #include "GreedyMethods.hpp"
 
+/**
+ * @brief contains orders and racks relatives informations 
+ * @param orderToRacks associating racks used to satisfy each order
+ * @param orderOccurRacks tells how much time we use a certain rack for each order
+ * @param computeOrderAndRacks method that compute the two attributs described above from 
+ * a given solution and the problem data
+ */
 struct orderAndRacks {
 
     std::vector<std::vector<int>> orderToRacks;
     std::vector<std::vector<int>> orderOccurRacks; 
-    void computeOrderAndRacks(const Solution& sol, const Data& data); // construction orderToRacks & orderOccurRakcs
+    void computeOrderAndRacks(const Solution& sol, const Data& data); 
     
 };
 
@@ -77,13 +84,13 @@ struct famSolInfos {
 struct LocalSearchMethods {
 
     const Data& data; 
-    Solution bestSol; 
+    Solution& bestSol; 
     int bestVal; 
     orderAndRacks oAr; 
     aisleInfos aInfos; 
     famSolInfos fsi; 
 
-    LocalSearchMethods(const Data& _data, const Solution& _sol, int _solVal); 
+    LocalSearchMethods(const Data& _data, Solution& _sol, int _solVal); 
 
     Solution getSolution() const; 
 

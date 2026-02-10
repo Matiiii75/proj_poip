@@ -157,7 +157,7 @@ void famSolInfos::computeDefIntervals(const Data& data, const Solution& sol) {
 
 /* LocalSearchMethods */
 
-LocalSearchMethods::LocalSearchMethods(const Data& _data, const Solution& _sol, int _solVal) 
+LocalSearchMethods::LocalSearchMethods(const Data& _data, Solution& _sol, int _solVal) 
 : data(_data), bestSol(_sol), bestVal(_solVal)
 {
  
@@ -168,6 +168,12 @@ LocalSearchMethods::LocalSearchMethods(const Data& _data, const Solution& _sol, 
     oAr.computeOrderAndRacks(_sol, data); 
     fsi.computeFamInterFamOrd(data, _sol); 
     fsi.computeDefIntervals(data, _sol); 
+
+    for(int i = 0; i < _data.nbFam; ++i) {
+        std::pair<int,int> currpair; 
+        currpair = fsi.defIntervals[i]; 
+        std::cout << i << " : " << currpair.first << "," << currpair.second << std::endl;
+    }
 
 }
 
@@ -481,7 +487,10 @@ void LocalSearchMethods::applyMove(const BestSwap& bestSwap)
         if((int)bestSol.RackToProd[contactPoint].size() < data.capRacks[contactPoint])
             fsi.defIntervals[predFam].second = contactPoint; 
         else // else, stop right before 
-            fsi.defIntervals[predFam].second = contactPoint - 1; 
+            if(findFamProdInRack(contactPoint, predFam) == -1) // if predFam isn't contactPoint
+                fsi.defIntervals[predFam].second = contactPoint - 1; // place it right before 
+            else   // can go to contactPoint
+                fsi.defIntervals[predFam].second = contactPoint; 
 
     }
 
@@ -489,11 +498,14 @@ void LocalSearchMethods::applyMove(const BestSwap& bestSwap)
 
         int contactPoint = fsi.famIntervals[famProd1].second; // new famProd1's rack far right
 
-        // if contactPoint rack between two fams isn't empty -> predFam can go there
+        // if contactPoint rack between two fams isn't empty -> succFam can go there
         if((int)bestSol.RackToProd[contactPoint].size() < data.capRacks[contactPoint])
             fsi.defIntervals[succFam].first = contactPoint; 
         else // else, stop right before 
-            fsi.defIntervals[succFam].first = contactPoint + 1; 
+            if(findFamProdInRack(contactPoint, succFam) == -1) // if succFam isn't contactPoint
+                fsi.defIntervals[succFam].first = contactPoint + 1; // place it right before 
+            else   // can go to contactPoint
+                fsi.defIntervals[succFam].first = contactPoint; 
 
     }
 
@@ -502,6 +514,18 @@ void LocalSearchMethods::applyMove(const BestSwap& bestSwap)
     /* ACTUALIZE BESTVAL */
     
     bestVal -= bestSwap.bestDelta; 
+    // std::cout << predFam << "," << succFam << "," << famProd1 << std::endl;
+    // std::cout << "defIntervals :" << std::endl;
+    // std::cout << fsi.defIntervals[predFam].first << "," << fsi.defIntervals[predFam].second << std::endl;
+    // std::cout << fsi.defIntervals[succFam].first << "," << fsi.defIntervals[succFam].second << std::endl; 
+    // std::cout << fsi.defIntervals[famProd1].first << "," << fsi.defIntervals[famProd1].second << std::endl;
+    // std::cout << "famIntervals : "  << std::endl;
+    // std::cout << fsi.famIntervals[predFam].first << "," << fsi.famIntervals[predFam].second << std::endl;
+    // std::cout << fsi.famIntervals[succFam].first << "," << fsi.famIntervals[succFam].second << std::endl; 
+    // std::cout << fsi.famIntervals[famProd1].first << "," << fsi.famIntervals[famProd1].second << std::endl;
+    if(predFam != -1){ if(fsi.defIntervals[predFam].first > fsi.defIntervals[predFam].second) throw std::runtime_error("1");}
+    if(succFam != -1){ if(fsi.defIntervals[succFam].first > fsi.defIntervals[succFam].second) throw std::runtime_error("2");}
+    if(fsi.defIntervals[famProd1].first > fsi.defIntervals[famProd1].second) throw std::runtime_error("3");
 
 }
 
