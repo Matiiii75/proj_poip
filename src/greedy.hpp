@@ -1,8 +1,7 @@
 #pragma once 
 
 #include "Datas.hpp"
-#include "GreedyMethods.hpp"
-#include <map>
+#include "Common.hpp"
 
 struct Coi{
 
@@ -27,7 +26,6 @@ struct Coi{
 * @param data struct containing of instance
 */
 Solution coiGreedy(const Data& data);
-Solution coiGreedyAmelioration(const Data& data);
 
 Solution initSol(const Data& data);
 

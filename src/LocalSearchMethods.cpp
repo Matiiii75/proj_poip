@@ -157,25 +157,8 @@ void famSolInfos::computeDefIntervals(const Data& data, const Solution& sol) {
 
 /* LocalSearchMethods */
 
-LocalSearchMethods::LocalSearchMethods(const Data& _data, Solution& _sol, int _solVal) 
-: data(_data), bestSol(_sol), bestVal(_solVal)
-{
- 
-    aInfos.computeRackToAisle(data); 
-    aInfos.computeAisleCap(data); 
-    aInfos.computeAisleAer(data); 
-    aInfos.computeAisleRemainCap(data, _sol); 
-    oAr.computeOrderAndRacks(_sol, data); 
-    fsi.computeFamInterFamOrd(data, _sol); 
-    fsi.computeDefIntervals(data, _sol); 
-
-    for(int i = 0; i < _data.nbFam; ++i) {
-        std::pair<int,int> currpair; 
-        currpair = fsi.defIntervals[i]; 
-        std::cout << i << " : " << currpair.first << "," << currpair.second << std::endl;
-    }
-
-}
+LocalSearchMethods::LocalSearchMethods(const Data& _data, Solution& _sol, int& _solVal, orderAndRacks& _oAr, aisleInfos& _aInfos, famSolInfos& _fsi) 
+: data(_data), bestSol(_sol), bestVal(_solVal), oAr(_oAr), aInfos(_aInfos), fsi(_fsi) {}
 
 Solution LocalSearchMethods::getSolution() const {
     return bestSol; 
@@ -287,7 +270,7 @@ int LocalSearchMethods::computeDeltaSwap(int prod1, int prod2, int prod1Rack, in
     int totalDelta = 0;     
     
     for(const int& o : data.ords.prodToOrds[prod1]) { // for each order containing prod1  
-
+        
         int countRack1 = oAr.orderOccurRacks[o][prod1Rack]; // memo 
         int countRack2 = oAr.orderOccurRacks[o][prod2Rack]; 
 

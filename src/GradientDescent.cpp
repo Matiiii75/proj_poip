@@ -1,5 +1,9 @@
 #include "GradientDescent.hpp"
 
+GradientDescent::GradientDescent(const Data& _data, Solution& _sol, int& _solVal, 
+    orderAndRacks& _oAr, aisleInfos& _aInfos, famSolInfos& _fsi)
+: LocalSearchMethods(_data, _sol, _solVal, _oAr, _aInfos, _fsi) {}
+
 void GradientDescent::optimize() {
 
     std::random_device rd; // create random generator
@@ -8,7 +12,7 @@ void GradientDescent::optimize() {
     std::vector<int> famIndex = genRandomOrderFam(data); // compute random order of family index
 
     bool improved = true; 
-    int z = 0; 
+    
     while(improved) {
         
         improved = false; 
@@ -98,8 +102,6 @@ void GradientDescent::optimize() {
         }
 
         std::cout << "solVal : " << bestVal << std::endl; 
-        // std::cout <<"z : " << z << std::endl;
-        // if(++z > 10000) break; 
     }
 
 }

@@ -2,7 +2,7 @@
 
 #include "Datas.hpp"
 #include "greedy.hpp"
-#include "GreedyMethods.hpp"
+#include "Common.hpp"
 
 /**
  * @brief contains orders and racks relatives informations 
@@ -85,12 +85,12 @@ struct LocalSearchMethods {
 
     const Data& data; 
     Solution& bestSol; 
-    int bestVal; 
-    orderAndRacks oAr; 
-    aisleInfos aInfos; 
-    famSolInfos fsi; 
+    int& bestVal; 
+    orderAndRacks& oAr; 
+    aisleInfos& aInfos; 
+    famSolInfos &fsi; 
 
-    LocalSearchMethods(const Data& _data, Solution& _sol, int _solVal); 
+    LocalSearchMethods(const Data& _data, Solution& _sol, int& _solVal, orderAndRacks& _oAr, aisleInfos& _aInfos, famSolInfos& _fsi); 
 
     Solution getSolution() const; 
 

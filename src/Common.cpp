@@ -1,4 +1,4 @@
-#include "GreedyMethods.hpp"
+#include "Common.hpp"
 
 // Compute value for a given solution
 int computeSolValue(const Solution& sol, const Data& data) {
@@ -62,3 +62,4 @@ void eraseSortedVec(int x, std::vector<int>& v) {
     auto it = std::lower_bound(v.begin(), v.end(), x); // seek LB of x 
     if(it != v.end() && *it == x) v.erase(it); // if found x -> erase 
 }
+

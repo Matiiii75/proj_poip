@@ -2,21 +2,12 @@
 
 #include "LocalSearchMethods.hpp"
 
-struct TabuSearch : LocalSearchMethods {
+struct SAA : LocalSearchMethods {
 
-    int tabuSize; // max prod tabu list should contain
-    std::queue<int> tabuQ; // tabu list
-    std::vector<bool> isInTabu; // to check falsty if a prod is in tabuQ
 
-    TabuSearch(const Data& _data, Solution& _sol, int _solVal); 
 
-    void addTabu(int prod); 
-
-    void resetTabu(); 
-
-    void optimize();
-
-    // TESTS RECUIT
+    SAA(const Data& _data, Solution& _sol, int& _solVal, 
+        orderAndRacks& _oAr, aisleInfos& _aInfos, famSolInfos& _fsi);  
 
     int genRandomNumber(int a, int b, std::mt19937& g); 
 
@@ -34,8 +25,8 @@ struct TabuSearch : LocalSearchMethods {
 
     void debug(std::string s); 
 
-    double initTemp(const std::vector<std::vector<int>>& famToProdVec, std::mt19937& g); 
+    double initTemp(const std::vector<std::vector<int>>& famToProdVec, std::mt19937& g);  
 
-    void optiRecuit(double initialTemp); 
+    void optimize();
 
 }; 

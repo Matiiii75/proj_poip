@@ -30,34 +30,6 @@ Coi::Coi(const Data& data){
 Solution coiGreedy(const Data& data){
     Coi coi(data); // create coi struct
     Solution sol; // create sol struct
-    sol.prodToRack.resize(data.nbProd); sol.RackToProd.resize(data.nbRacks); // initialize vectors of sol sizes
-    std::vector<int> capRacksAer = data.initCapRacksAer();
-
-    int rack = 1; // initialize current rack 
-    for(const auto& [f, vf] : coi.coiFam ){ // loop over families sorted by increasing COI
-        for(const auto& p : data.fam.famToProd[f]){ // loop over products of f sorted by increasing COI
-            bool place = false; // bolean saying if p is place in a rack : initialize to false
-            
-
-            while(!place){ //iterate while p isn't place
-
-                if (rack >= data.nbRacks) { 
-                    throw std::runtime_error("Product placement failed: no racks available");
-                }
-
-                if((int) sol.RackToProd[rack].size() + 1 <= capRacksAer[rack]){ // if there is the space in rack for a new product
-                    sol.prodToRack[p]= rack; sol.RackToProd[rack].push_back(p); place = true; //update sol and bolean value : p is place
-                }else{++rack;} // if there isn't enough of space : pass to next rack                     
-            }
-        }
-    }
-
-    return sol;
-}
-
-Solution coiGreedyAmelioration(const Data& data){
-    Coi coi(data); // create coi struct
-    Solution sol; // create sol struct
     sol.prodToRack.resize(data.nbProd); sol.RackToProd.resize(data.nbRacks); // initialize vectors of sol's sizes
     std::vector<int> capRacksAer = data.initCapRacksAer();  //compute aeration
 
@@ -115,7 +87,7 @@ Solution initSol(const Data& data) {
     return sol; 
 }
 
-Solution initSolRandom(const Data& data){
+Solution initSolRandom(const Data& data) {
 
     std::random_device rd; std::mt19937 gen(rd());
 
@@ -128,14 +100,14 @@ Solution initSolRandom(const Data& data){
 
     std::vector<std::vector<int>> OrderProd(data.nbFam);
 
-    for(int f = 0 ; f < data.nbFam; ++f){ // for each family
+    for(int f = 0 ; f < data.nbFam; ++f) { // for each family
         OrderProd[f].assign(data.fam.famToProd[f].begin(),data.fam.famToProd[f].end()); //convert unordered_set in vector
         shuffleVector(OrderProd[f], gen); // create a random order of th pruduct of the family
     }
 
     int rack = 1; // initialize current rack 
 
-    for(int i = 0; i < data.nbFam; ++i){
+    for(int i = 0; i < data.nbFam; ++i) {
         for(int j = 0; j < (int) OrderProd[i].size(); ++j){
             int prod = OrderProd[i][j]; //get product at index j for family in index i
             
