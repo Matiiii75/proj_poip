@@ -63,3 +63,8 @@ void eraseSortedVec(int x, std::vector<int>& v) {
     if(it != v.end() && *it == x) v.erase(it); // if found x -> erase 
 }
 
+
+int generateRandomInt(std::mt19937& g, int a, int b) {
+    std::uniform_int_distribution<int> dis(a,b); 
+    return dis(g); 
+}

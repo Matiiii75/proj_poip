@@ -154,7 +154,6 @@ void famSolInfos::computeDefIntervals(const Data& data, const Solution& sol) {
 
 /* end famSolInfos methods */
 
-
 /* LocalSearchMethods */
 
 LocalSearchMethods::LocalSearchMethods(const Data& _data, Solution& _sol, int& _solVal, orderAndRacks& _oAr, aisleInfos& _aInfos, famSolInfos& _fsi) 

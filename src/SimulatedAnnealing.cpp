@@ -135,10 +135,11 @@ void SAA::optimize() {
     // ! dessous : on pourrait le passer en argument au recuit si on prévois de le faire plusieurs fois
     std::vector<std::vector<int>> famToProdVec = initFamToProdVector(data); 
 
-    double temp = initTemp(famToProdVec, g); 
+    double temp = initTemp(famToProdVec, g);  
     int nbIterMax = data.nbProd * 10; 
     int iter = 0; 
-    while(temp > 0.01) {
+
+    while(temp > 10) {
         for(int i = 0; i < nbIterMax; ++i) {
 
             // tirages aléatoires
