@@ -29,4 +29,6 @@ struct SAA : LocalSearchMethods {
 
     void optimize();
 
+    void optimize2(double temp, int nbIter); 
+
 }; 

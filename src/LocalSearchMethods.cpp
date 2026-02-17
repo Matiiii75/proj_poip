@@ -505,9 +505,12 @@ void LocalSearchMethods::applyMove(const BestSwap& bestSwap)
     // std::cout << fsi.famIntervals[predFam].first << "," << fsi.famIntervals[predFam].second << std::endl;
     // std::cout << fsi.famIntervals[succFam].first << "," << fsi.famIntervals[succFam].second << std::endl; 
     // std::cout << fsi.famIntervals[famProd1].first << "," << fsi.famIntervals[famProd1].second << std::endl;
-    if(predFam != -1){ if(fsi.defIntervals[predFam].first > fsi.defIntervals[predFam].second) throw std::runtime_error("1");}
-    if(succFam != -1){ if(fsi.defIntervals[succFam].first > fsi.defIntervals[succFam].second) throw std::runtime_error("2");}
-    if(fsi.defIntervals[famProd1].first > fsi.defIntervals[famProd1].second) throw std::runtime_error("3");
+    if(predFam != -1){ if(fsi.defIntervals[predFam].first > fsi.defIntervals[predFam].second) 
+        throw std::runtime_error("(LSM::applyMove) pb with predFam");}
+    if(succFam != -1){ if(fsi.defIntervals[succFam].first > fsi.defIntervals[succFam].second) 
+        throw std::runtime_error("(LSM::applyMove) pb with succFam");}
+    if(fsi.defIntervals[famProd1].first > fsi.defIntervals[famProd1].second) 
+        throw std::runtime_error("(LSM::applyMove) pb with defIntervals");
 
 }
 

@@ -8,13 +8,16 @@ void GradientDescent::optimize() {
 
     std::random_device rd; // create random generator
     std::mt19937 g(rd()); 
-
+    
     std::vector<int> famIndex = genRandomOrderFam(data); // compute random order of family index
 
     bool improved = true; 
-    
+    startTimer();  // start timer 
+
     while(improved) {
         
+        if(getTime() > 3600.0) break; 
+
         improved = false; 
         BestSwap bestSwap; 
         shuffleVector(famIndex, g); // shuffle fam index order to loop on
@@ -30,7 +33,6 @@ void GradientDescent::optimize() {
 
                 for(int newPos = fmin; newPos <= fmax; ++newPos) { // for each position in defIntervals 
                     if(newPos == prodRack) continue; // if same rack -> skip
-                    // if(aInfos.rackToAisle[newPos] == rackAisle) continue; // ! TEST : ignorer si les deux rack sont dans la meme allée
 
                     bool enoughCap, enoughAer;
                     int newPosAisle = aInfos.rackToAisle[newPos]; // get newPos's aisle
@@ -99,9 +101,18 @@ void GradientDescent::optimize() {
         if(bestSwap.prod1ToProd2.first != -1) {
             applyMove(bestSwap); 
             improved = true; 
-        }
-
-        std::cout << "solVal : " << bestVal << std::endl; 
+        } 
     }
 
+    std::cout << "time passed : " << getTime() << std::endl;
+}
+
+void GradientDescent::startTimer() {
+    start = std::chrono::steady_clock::now(); 
+}
+
+double GradientDescent::getTime() {
+    auto stop = std::chrono::steady_clock::now(); 
+    std::chrono::duration<double> duration = stop - start; 
+    return duration.count(); 
 }

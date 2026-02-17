@@ -2,6 +2,7 @@
 
 #include "GradientDescent.hpp" // call every other files in the profect except MILP
 #include "SimulatedAnnealing.hpp"
+#include "FamilliesTSP.hpp"
 
 struct Conductor {
 
@@ -11,6 +12,12 @@ struct Conductor {
     orderAndRacks oAr; 
     aisleInfos aInfos; 
     famSolInfos fsi; 
+
+    std::vector<int> tabuList; 
+    int tabuTenure = 5; 
+
+    // time attributes
+    std::chrono::steady_clock::time_point start; 
 
     Conductor(const Data& _data); // constructor 
 
@@ -45,6 +52,18 @@ struct Conductor {
      * @note the initial solution obtained will follow "cube order index" heuristic 
      */
     void callInitSolCoi(); 
+
+    /**
+     * @brief call comptuteTSP & fillSolution from "FamilliesTSP.hpp" in order to compute 
+     * an initial solution with optimal famillies ordering
+     */
+    void callInitSolTSP(); 
+
+    /**
+     * @brief call GreedyBestInsert function from "greedy.hpp" in order to compute 
+     * an initial solution based on best insertion policy
+     */
+    void calInitSolBestInsert(); 
 
     /**
      * @brief create and execute Simulated Annealing algorithm in order 
@@ -87,7 +106,7 @@ struct Conductor {
      * @param prodOrder encoded order 
      * @note shall modify "solution" attribute of Conductor class, but isn't udpating
      * "oAr" attribute wich mean if this product placement is optimal, we will have to call
-     * *INSERER NOM FONCTION POUR MAJ oAr* function
+     * updateOar function
      * @warning modify "solution" attribute of Conductor class 
      */
     void placeProducts(int fam1, int fam2, int f1min, int f2max, const std::vector<int>& prodOrder); 
@@ -136,10 +155,19 @@ struct Conductor {
 
     void FindBestFamSwap(); 
 
+    void SmartMultipleFamSwaps(int nbSwaps, int currentIter, int& globalBestVal); 
+
     void swapFamSAA(int nbIterMax); 
 
     void swapFamSAA2(int nbIterMax); 
 
+    void startTimer(); 
+
+    double stopTimer(); 
+
+    void writeSolution(int numInstance, double temp, int nbIter, int val, double time); 
+
+    void StatsSaa(int numInstance); 
 }; 
 
 

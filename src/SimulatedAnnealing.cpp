@@ -136,7 +136,7 @@ void SAA::optimize() {
     std::vector<std::vector<int>> famToProdVec = initFamToProdVector(data); 
 
     double temp = initTemp(famToProdVec, g);  
-    int nbIterMax = data.nbProd * 10; 
+    int nbIterMax = data.nbProd * 10;  
     int iter = 0; 
 
     while(temp > 10) {
@@ -188,6 +188,73 @@ void SAA::optimize() {
             }
             iter++;
             displayInfos(iter, temp); 
+        }
+        
+        temp = temp*0.95; 
+    }
+}
+
+void SAA::optimize2(double temp, int nbIter) {
+
+    std::random_device rd; 
+    std::mt19937 g(rd()); 
+
+    // ! dessous : on pourrait le passer en argument au recuit si on prévois de le faire plusieurs fois
+    std::vector<std::vector<int>> famToProdVec = initFamToProdVector(data); 
+
+    if(temp == -1.0) temp = initTemp(famToProdVec, g);  
+    int nbIterMax = data.nbProd * nbIter;  
+    int iter = 0; 
+
+    while(temp > 10) {
+        for(int i = 0; i < nbIterMax; ++i) {
+
+            // tirages aléatoires
+            int randFam = genRandomNumber(0, data.nbFam-1, g); 
+            int randProd = getRandomProdInFam(randFam, data, g, famToProdVec); 
+            int prodRack = bestSol.prodToRack[randProd]; 
+            int fmin = fsi.defIntervals[randFam].first; // get def intervals 
+            int fmax = fsi.defIntervals[randFam].second; 
+            int randPos = getRandomPos(prodRack, fmin, fmax, g); 
+            if(prodRack == randPos) continue; // skip if same rack
+
+            // check if it can be send or swapped
+            bool enoughCap, enoughAer; 
+            int prodAisle = aInfos.rackToAisle[prodRack]; // get currProd's aisle
+            int randPosAisle = aInfos.rackToAisle[randPos]; // get randPos's aisle
+
+            if(randPosAisle == prodAisle) enoughAer = true; 
+            else enoughAer = aInfos.aisleAerEnough(randPosAisle); 
+            enoughCap = rackCapEnough(randPos); 
+ 
+            int Delta;
+            int sameFamProd = -1; // set -1 by default   
+            BestSwap bestSwap; 
+
+            if(enoughCap && enoughAer) // if enough rack cap & aisle aeration to send prod 
+                Delta = computeDeltaSend(randProd, prodRack, randPos); 
+            else { // case enoughCap && !enoughAer and !enoughCap
+                sameFamProd = findFamProdInRack(randPos, randFam); // seek for same fam other prod 
+                if(sameFamProd == -1) continue; // if not found -> skip
+                Delta = computeDeltaSwap(randProd, sameFamProd, prodRack, randPos); 
+            }
+            if(Delta > 0) { // if upgrading solution -> applymove 
+                bestSwap.bestDelta = Delta; 
+                bestSwap.prod1ToProd2 = {randProd, sameFamProd}; 
+                bestSwap.rack1ToRack2 = {prodRack, randPos}; 
+                applyMove(bestSwap); 
+            }
+            else { // -> check metropolis criterium
+                bool accept = metropolis(Delta, temp, g);
+                if(accept) { // if probability accept the move : 
+                    bestSwap.bestDelta = Delta; 
+                    bestSwap.prod1ToProd2 = {randProd, sameFamProd}; 
+                    bestSwap.rack1ToRack2 = {prodRack, randPos}; 
+                    applyMove(bestSwap);
+                }
+            }
+            iter++;
+            // displayInfos(iter, temp); 
         }
         
         temp = temp*0.95; 

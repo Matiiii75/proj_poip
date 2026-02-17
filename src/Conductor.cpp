@@ -6,6 +6,10 @@ void Conductor::computeArgs() {
 
     displayCalling("oAr, aInfos & fsi building"); 
 
+    oAr = orderAndRacks(); 
+    aInfos = aisleInfos(); // full reset of structure
+    fsi = famSolInfos();  // useful for Stats (example)
+
     oAr.computeOrderAndRacks(solution, data); 
     aInfos.computeRackToAisle(data); 
     aInfos.computeAisleCap(data); 
@@ -38,6 +42,19 @@ void Conductor::callInitSol() {
 
 void Conductor::callInitSolCoi() {
     solution = coiGreedy(data); 
+    val = computeSolValue(solution, data); 
+    computeArgs(); 
+}
+
+void Conductor::callInitSolTSP() {
+    std::vector<int> famOrder = computeTSP(data); 
+    solution = fillSolution(data, famOrder);
+    val = computeSolValue(solution, data); 
+    computeArgs(); 
+}
+
+void Conductor::calInitSolBestInsert() {
+    solution = GreedyBestInsert(data); 
     val = computeSolValue(solution, data); 
     computeArgs(); 
 }
@@ -306,6 +323,103 @@ void Conductor::swapFamSAA(int nbIterMax) {
     val = bestVal; solution = bestSol; 
 }
 
+void Conductor::SmartMultipleFamSwaps(int nbSwaps, int currentIter, int& globalBestVal) {
+
+    // On répète l'opération 'nbSwaps' fois
+    for (int k = 0; k < nbSwaps; ++k) {
+
+        int bestLocalDelta = std::numeric_limits<int>::max(); // Meilleure amélioration pour CE pas
+        int bestFam1Index = -1;
+        int bestFam2Index = -1;
+        
+        // Structures pour mémoriser le meilleur mouvement de cette étape k
+        std::vector<int> bestProdOrder;
+        std::vector<std::vector<int>> bestCopy;
+        int bestFirstProdF1 = -1;
+        int bestStepVal = -1;
+
+        // --- 1. EXPLORATION DU VOISINAGE (Trouver le meilleur coup pour l'étape k) ---
+        for(int i = 0; i < data.nbFam - 1; ++i) { 
+
+            int fam1 = fsi.famOrder[i]; 
+            int fam2 = fsi.famOrder[i+1];
+            
+            int f1min = fsi.famIntervals[fam1].first;
+            int f2max = fsi.famIntervals[fam2].second;
+
+            // Simulation du Swap
+            std::vector<std::vector<int>> copy = copyRackToProd(f1min, f2max);
+            std::vector<int> prodOrder;
+            int FirstProdF1 = computeProdOrder(fam1, fam2, prodOrder);
+            placeProducts(fam1, fam2, f1min, f2max, prodOrder);
+            
+            // Évaluation
+            int currentSwapCost = computeSolValue(solution, data);
+
+            // --- LOGIQUE TABOU ---
+            // Le mouvement est tabou si la date de fin d'interdiction est future
+            bool isTabu = (tabuList[i] > currentIter); 
+            
+            // Aspiration : on s'en fiche du tabou si c'est un record absolu
+            bool isAspiration = (currentSwapCost < globalBestVal); 
+
+            // On cherche le meilleur coup DE CETTE ÉTAPE (k)
+            if ((!isTabu && currentSwapCost < bestLocalDelta) || (isTabu && isAspiration)) {
+                
+                bestLocalDelta = currentSwapCost;
+                bestStepVal = currentSwapCost;
+
+                bestFam1Index = i;
+                bestFam2Index = i+1;
+                bestFirstProdF1 = FirstProdF1;
+                bestProdOrder = prodOrder;
+                bestCopy = copy;
+            }
+
+            // Annulation (Backtrack) pour tester le suivant
+            repairSolution(fam1, fam2, f1min, f2max, copy);
+        }
+
+        // --- 2. APPLICATION DU MEILLEUR MOUVEMENT DE L'ÉTAPE k ---
+        
+        if (bestFam1Index != -1) {
+            
+            // Application physique définitive pour cette étape
+            int bestFam1 = fsi.famOrder[bestFam1Index];
+            int bestFam2 = fsi.famOrder[bestFam2Index];
+            int f1min = fsi.famIntervals[bestFam1].first;
+            int f2max = fsi.famIntervals[bestFam2].second;
+
+            placeProducts(bestFam1, bestFam2, f1min, f2max, bestProdOrder);
+            updapteOar(bestFam1, bestFam2, f1min, f2max, bestCopy);
+            updateFsi(bestFam1Index, bestFam2Index, bestFirstProdF1, bestProdOrder);
+            
+            // Mise à jour de la valeur courante
+            val = bestStepVal;
+
+            // MISE À JOUR TABOU IMMÉDIATE
+            // C'est crucial : on interdit ce mouvement pour les prochains tours de la boucle k
+            // et pour les itérations futures du recuit.
+            tabuList[bestFam1Index] = currentIter + tabuTenure + k; 
+
+            // Mise à jour du Global Best si nécessaire
+            if (val < globalBestVal) {
+                globalBestVal = val;
+                // Optionnel : Sauvegarder la meilleure solution globale ici si tu as une variable 'bestGlobalSol'
+                 std::cout << ">>> New Global Best found inside Tabu Step " << k << ": " << globalBestVal << std::endl;
+            }
+
+            // Debug optionnel
+            // std::cout << "Step " << k << ": Swapped " << bestFam1 << "-" << bestFam2 << " Val: " << val << std::endl;
+
+        } else {
+            // Aucun mouvement possible (tout est tabou et rien n'améliore). 
+            // On arrête la séquence pour ne pas perdre de temps.
+            break; 
+        }
+    }
+}
+
 void Conductor::FindBestFamSwap() {
 
     std::cout << "solval : " << val << std::endl;
@@ -354,33 +468,94 @@ void Conductor::FindBestFamSwap() {
 
     updapteOar(bestFam1, bestFam2, f1min, f2max, bestCopy); // update structures 
     updateFsi(bestFam1Index, bestFam2Index, bestFirstProdF1, bestProdOrder); 
+    val = bestValFound; 
 
 }
 
 void Conductor::swapFamSAA2(int nbIterMax) {
-
-    std::random_device rd; // create our random generator ID 
+    
+    std::random_device rd; 
     std::mt19937 generator(rd()); 
 
-    SimulatedAnnealing(); // apply SAA 1 first time
+    // Initialisation Tabou
+    if((int)tabuList.size() != data.nbFam) tabuList.assign(data.nbFam, 0);
+    else std::fill(tabuList.begin(), tabuList.end(), 0);
+
+    SimulatedAnnealing();
     
-    Solution bestSol = solution; 
-    int bestVal = val; // store best Solution and best value 
+    Solution bestSol = solution;
+    int bestVal = val; 
+    
+    int iter = 0;
+    while(iter < nbIterMax) {
 
-    int iter = 0; 
-    while(iter < nbIterMax) { 
+        // --- CHANGEMENT ICI ---
+        // On demande 5 swaps intelligents à la suite
+        // L'état de la solution change 5 fois à l'intérieur de cette fonction
+        SmartMultipleFamSwaps(5, iter, bestVal);
 
-        FindBestFamSwap(); 
-        SimulatedAnnealing(); 
+        // Ensuite on optimise finement ce nouvel état
+        SimulatedAnnealing();
 
         if(val < bestVal) {
-            bestVal = val; 
-            bestSol = solution; 
+            bestVal = val;
+            bestSol = solution;
+            std::cout << "ITER " << iter << " NEW BEST: " << bestVal << std::endl;
+        } else {
+            // Optionnel : Si le résultat est mauvais, on peut vouloir revenir à bestSol 
+            // pour ne pas dériver trop loin, ou au contraire laisser dériver (Diversification).
+            // Pour l'instant, on laisse dériver (c'est le but du Tabou).
         }
 
-        iter++; 
+        iter++;
     }
 
-    val = bestVal; solution = bestSol; 
+    val = bestVal;
+    solution = bestSol;
+}
+
+void Conductor::startTimer() {
+    start = std::chrono::steady_clock::now(); 
+}
+
+double Conductor::stopTimer() {
+    auto stop = std::chrono::steady_clock::now(); 
+    std::chrono::duration<double> duration = stop - start; 
+    return duration.count(); 
+}
+
+void Conductor::writeSolution(int numInstance, double temp, int nbIter, int val, double time) {
+    
+    std::ofstream write("../Stats/SAA_Stats_TSP.txt", std::ios::app); 
+    if(!write.is_open()) // check if opened
+        throw std::runtime_error("writeSolution : couldn't open file"); 
+    write << numInstance << " " << temp << " " << nbIter << " " << val << " " << time << std::endl; // write data
+    write.close(); 
+
+}
+
+void Conductor::StatsSaa(int numInstance) { // give numInstance in argument so it can write in file 
+
+    std::vector<double> allTemps = {100.0,250.0,500.0,1000.0,2000.0,2500.0,5000.0,7500.0,10000.0,50000.0,-1.0}; 
+    std::vector<int> allNbIter = {10,20,30,40,50,100}; 
+
+    for(double temp : allTemps) {
+        for(int iter : allNbIter) {
+
+            callInitSolTSP(); // reset solution 
+            SAA SaaInstance(data, solution, val, oAr, aInfos, fsi); // create SAA object
+
+            std::cout << "temp : " << temp << " -- iter : " << iter << std::flush; 
+            startTimer(); 
+            SaaInstance.optimize2(temp, iter); // apply SAA 
+            double time = stopTimer(); // get time 
+            std::cout << " -- value : " << val;
+            std::cout << " -- time needed : " << time << std::endl;
+
+            writeSolution(numInstance, temp, iter, val, time);  // write data in file 
+
+        }
+    }
+
 }
 

@@ -1,6 +1,9 @@
 # Ignorer Datas 
 data/
 
+# Ignorer Stats 
+Stats/
+
 # Tout fichier sans extension dans src = exécutable
 src/*
 !src/*.c
