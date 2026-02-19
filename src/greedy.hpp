@@ -28,8 +28,21 @@ struct Coi{
 */
 Solution coiGreedy(const Data& data);
 
+/**
+ * @brief Builds a deterministic initial feasible solution.
+ * @param data problem data
+ * @return A solution where products are assigned sequentially to racks
+ *         following the family order.
+ */
 Solution initSol(const Data& data);
 
+
+/**
+ * @brief Generates a random initial feasible solution.
+ * @param data problem data
+ * @return A solution where products are randomly ordered within each family
+ *         and sequentially assigned to racks respecting capacity constraints.
+ */
 Solution initSolRandom(const Data& data);
 
 /**
@@ -97,7 +110,15 @@ Correlation BuildCorDiffFam(const Data& data, bool display);
  */
 void BuildOrderFam(std::vector<int>& FamOrd, std::vector<bool>& FamPlaced,
                    const Correlation& CorBetFam, const Data& data);
-
+/**
+ * @brief Builds a family placement order based on the correlation matrix.
+ * @param FamOrd output vector storing the family order
+ * @param FamPlaced working array indicating whether each family has been placed
+ * @param CorBetFam correlation data used to rank families
+ * @param data problem data
+ * @note The order is built incrementally by inserting families on the left,
+ *       on the right, or between two consecutive families (best insertion rule).
+ */
 void BuildOrderFamBestInsert(std::vector<int>& FamOrd, std::vector<bool>& FamPlaced,
                    const Correlation& CorBetFam, const Data& data);
 
@@ -111,7 +132,17 @@ void BuildOrderFamBestInsert(std::vector<int>& FamOrd, std::vector<bool>& FamPla
  */
 void BuildProdOrder(const Correlation& CorInFam, std::vector<int>& ProdOrd,
                     const Data& data, const std::vector<int>& FamOrd);
-                   
+
+/**
+ * @brief Builds a product placement order using a best insertion strategy within each family.
+ * @param CorInFam correlation data used to evaluate insertion gains
+ * @param ProdOrd output vector storing the global product order
+ * @param data problem data
+ * @param FamOrd family order previously computed
+ * @note For each family in FamOrd, products are ordered using a best
+ *       insertion rule based on correlation gains, then inserted
+ *       contiguously into the global order.
+ */
 void BuildProdOrderBestInsert(const Correlation& CorInFam, std::vector<int>& ProdOrd,
                     const Data& data, const std::vector<int>& FamOrd);
 
