@@ -15,31 +15,46 @@
 
 
 /**
- * @brief Contains Familly related infos 
- */
+* @brief Contains Familly related infos 
+*/
 struct Familly {
+
+    /* ATTRIBUTES */
     std::vector<int> prodToFam; // wich fam associated to each prod
     std::vector<std::unordered_set<int>> famToProd; // wich prods associated to each fam
-    void displayData(); 
+
+    /* METHODS */
+    void displayData(); // display family's info
 }; 
 
 /**
- * @brief Contains Orders related infos
- */
+* @brief Contains Orders related infos
+*/
 struct Orders {
+
+    /* ATTRIBUTES */
     std::vector<std::unordered_set<int>> ordsToProd; // fastly check products associated to orders
     std::vector<std::unordered_set<int>> prodToOrds; // fastly check orders associated to product
-    std::vector<std::vector<bool>> isProdInOrd; // for better performance //! MIGHT DELETE ordsToProd at term ??? 
-    void displayData(); 
+    std::vector<std::vector<bool>> isProdInOrd; // for better performance 
+
+    /* METHODS */
+    void displayData(); // display order's info
 };
 
 /**
- * @brief Contains all 6 files defining a complete instance 
- */
+* @brief Contains all 6 files defining a complete instance 
+*/
 struct allFiles {
-    std::string f1,f2,f3,f4,f5,f6; 
+
+    /* ATTRIBUTES */
+    std::string f1,f2,f3,f4,f5,f6;
+    
+    /* METHODS */
     void computeAllFiles(int numInstance); 
 };
+
+
+
 
 struct Solution{
 
@@ -57,6 +72,10 @@ struct Solution{
 
 
 };
+
+/**
+* @brief Contains all the info of instance
+*/
 
 struct Data {
 
@@ -93,6 +112,11 @@ struct Data {
 
     void throwErrorFile(const std::string& where); // throw error and display where it happened
 
-    void computeIsProdInOrd(); // ! A REVOIR
+        
+    /**
+    * @brief compute matrix of boleans where isProdInOrd[o][prod] = true if prod is in order o
+    * @warning must be pre computed in main if data are const given in method (such as gradient) argument
+    */ 
+    void computeIsProdInOrd();
 }; 
 

@@ -35,25 +35,6 @@ void Orders::displayData() {
     std::cout << std::endl << std::endl;
 }
 
-void allFiles::computeAllFiles(int numInstance) {
- 
-    std::string n1,n2,n3,n4,n5,n6;
-    std::string path; 
-
-    n1 = "metadata.txt"; n2 = "rack_capacity.txt";
-    n3 = "rack_adjacency_matrix.txt"; n4 = "product_circuit.txt"; 
-    n5 = "aisle_racks.txt"; n6 = "orders.txt"; 
-    
-    if(numInstance == 0) path = "warehouse_toy/"; 
-    if(numInstance == 1) path = "warehouse_big_/warehouse_big_category/"; 
-    if(numInstance == 2) path = "warehouse_big_/warehouse_big_family/"; 
-    if(numInstance == 3) path = "warehouse_big_/warehouse_big_market/"; 
-
-    f1 = "../data/" + path + n1; f2 = "../data/" + path + n2; 
-    f3 = "../data/" + path + n3; f4 = "../data/" + path + n4; 
-    f5 = "../data/" + path + n5; f6 = "../data/" + path + n6; 
-
-}
 
 void Solution::displaySolution(int numInstance) {
 
@@ -72,6 +53,27 @@ void Solution::displaySolution(int numInstance) {
     for(int p = 0; p < nbProd; ++p) write << prodToRack[p] << std::endl; // for each product write his rack
 
     write.close(); // close output file
+
+}
+
+
+void allFiles::computeAllFiles(int numInstance) {
+ 
+    std::string n1,n2,n3,n4,n5,n6;
+    std::string path; 
+
+    n1 = "metadata.txt"; n2 = "rack_capacity.txt";
+    n3 = "rack_adjacency_matrix.txt"; n4 = "product_circuit.txt"; 
+    n5 = "aisle_racks.txt"; n6 = "orders.txt"; 
+    
+    if(numInstance == 0) path = "warehouse_toy/"; 
+    if(numInstance == 1) path = "warehouse_big_/warehouse_big_category/"; 
+    if(numInstance == 2) path = "warehouse_big_/warehouse_big_family/"; 
+    if(numInstance == 3) path = "warehouse_big_/warehouse_big_market/"; 
+
+    f1 = "../data/" + path + n1; f2 = "../data/" + path + n2; 
+    f3 = "../data/" + path + n3; f4 = "../data/" + path + n4; 
+    f5 = "../data/" + path + n5; f6 = "../data/" + path + n6; 
 
 }
 
@@ -107,8 +109,7 @@ void Data::readDistances(const std::string& f3) {
     std::ifstream f(f3); 
     if(!f.is_open()) throwErrorFile("readDistances"); 
 
-    int nbNodes;
-    f >> nbNodes; 
+    int nbNodes; f >> nbNodes; 
 
     for(int i = 0; i < nbNodes; ++i) // iterate over nb of racks both time
         for(int j = 0; j < nbNodes; ++j) f >> dists[i][j]; 
@@ -122,8 +123,7 @@ void Data::readProdCircuits(const std::string& f4) {
 
     f >> nbProd; 
     for(int i = 0; i < nbProd; ++i) { 
-        int currFam; f >> currFam;// store currFamilly 
-        //--currFam; // re indexation of Fam
+        int currFam; f >> currFam; // store currFamilly 
         fam.prodToFam[i] = currFam; // memorize product i is in familly currFam
         fam.famToProd[currFam].insert(i); // memorize currFam is assigned to product i
     }   
@@ -137,10 +137,9 @@ void Data::readAisleRacks(const std::string& f5) {
         
     f >> nbAisle; 
     for(int i = 0; i < nbAisle; ++i) {
-        int currNbRacks; 
-        f >> currNbRacks; 
+        int currNbRacks; f >> currNbRacks; 
         for(int j = 0; j < currNbRacks; ++j) {
-            f >> aisle[i]; 
+            f >> aisle[i];  // read all the rack inthe aisle and at the and store only the last one
         }
     }
 
@@ -203,8 +202,7 @@ void Data::displayData() {
     for(const auto& rack : aisle) std::cout << rack << " "; 
     std::cout << std::endl << std::endl;
 
-    fam.displayData(); 
-    ords.displayData(); 
+    fam.displayData(); ords.displayData(); 
 
 }
 
@@ -244,11 +242,7 @@ void Data::throwErrorFile(const std::string& where) {
     throw std::runtime_error("Couldn't open file at " + where);
 }
 
-// ! A RE CONSIDERER
-/**
- * @brief compute matrix of boleans where isProdInOrd[o][prod] = true if prod is in order o
- * @warning must be pre computed in main if data are const given in method (such as gradient) argument
- */
+
 void Data::computeIsProdInOrd() {
     ords.isProdInOrd.assign(nbOrd, std::vector<bool>(nbProd, false)); 
     for(int o = 0; o < nbOrd; ++o) {
