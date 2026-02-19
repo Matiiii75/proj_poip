@@ -12,6 +12,7 @@ src/*
 !src/*.hpp
 !src/*.md
 !src/*.ipynb
+!src/Makefile
 !src/
 
 # Objets

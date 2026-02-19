@@ -187,7 +187,7 @@ void SAA::optimize() {
                 }
             }
             iter++;
-            displayInfos(iter, temp); 
+            // displayInfos(iter, temp); 
         }
         
         temp = temp*0.95; 
