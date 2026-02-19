@@ -165,7 +165,7 @@ struct Conductor {
 
     double stopTimer(); 
 
-    void writeSolution(int numInstance, double temp, int nbIter, int val, double time); 
+    void writeSolution(int numInstance, double temp, int nbIter, int val, double time, int solgen); 
 
     void StatsSaa(int numInstance); 
 }; 
