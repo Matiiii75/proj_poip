@@ -1,4 +1,4 @@
-#include "GreedyMethods.hpp"
+#include "Common.hpp"
 
 // Compute value for a given solution
 int computeSolValue(const Solution& sol, const Data& data) {
@@ -61,4 +61,10 @@ void addSortedVec(int x, std::vector<int>& v) {
 void eraseSortedVec(int x, std::vector<int>& v) {
     auto it = std::lower_bound(v.begin(), v.end(), x); // seek LB of x 
     if(it != v.end() && *it == x) v.erase(it); // if found x -> erase 
+}
+
+
+int generateRandomInt(std::mt19937& g, int a, int b) {
+    std::uniform_int_distribution<int> dis(a,b); 
+    return dis(g); 
 }
