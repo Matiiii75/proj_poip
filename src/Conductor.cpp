@@ -189,17 +189,6 @@ void Conductor::updateFsi(int famId1, int famId2, int FirstProdF1, const std::ve
             fsi.defIntervals[fam1].first = newMaxF2 + 1; 
     }
 
-    // if (fsi.famIntervals[fam2].first != -1) {
-    //     fsi.defIntervals[fam2].first = std::min(fsi.defIntervals[fam2].first, fsi.famIntervals[fam2].first);
-    //     fsi.defIntervals[fam2].second = std::max(fsi.defIntervals[fam2].second, fsi.famIntervals[fam2].second);
-    // }
-
-    // // Pour fam1 (Droite) : C'est ICI que le crash 813 > 812 est résolu
-    // if (fsi.famIntervals[fam1].first != -1) {
-    //     // Si calcul théorique (813) > réalité (812), le min remettra la borne à 812.
-    //     fsi.defIntervals[fam1].first = std::min(fsi.defIntervals[fam1].first, fsi.famIntervals[fam1].first);
-    //     fsi.defIntervals[fam1].second = std::max(fsi.defIntervals[fam1].second, fsi.famIntervals[fam1].second);
-    // }
 }
 
 void Conductor::updapteOar(int fam1, int fam2, int f1min, int f2max, const std::vector<std::vector<int>>& copyRackToProd) {
@@ -524,38 +513,44 @@ double Conductor::stopTimer() {
     return duration.count(); 
 }
 
-void Conductor::writeSolution(int numInstance, double temp, int nbIter, int val, double time) {
+void Conductor::writeSolution(int numInstance, double temp, int nbIter, int val, double time, int solgen) {
     
-    std::ofstream write("../Stats/SAA_Stats_TSP.txt", std::ios::app); 
+    std::ofstream write("../Stats/genSolMethods.txt", std::ios::app); 
     if(!write.is_open()) // check if opened
         throw std::runtime_error("writeSolution : couldn't open file"); 
-    write << numInstance << " " << temp << " " << nbIter << " " << val << " " << time << std::endl; // write data
+    write << numInstance << " " << temp << " " << nbIter << " " << val << " " << time << " " << solgen << std::endl; // write data
     write.close(); 
 
 }
 
 void Conductor::StatsSaa(int numInstance) { // give numInstance in argument so it can write in file 
 
-    std::vector<double> allTemps = {100.0,250.0,500.0,1000.0,2000.0,2500.0,5000.0,7500.0,10000.0,50000.0,-1.0}; 
-    std::vector<int> allNbIter = {10,20,30,40,50,100}; 
+    std::vector<double> allTemps = {100,-1.0}; 
+    std::vector<int> allNbIter = {20}; 
+    std::vector<int> allSolGen = {1,2,3,4}; // 1 : coi , 2 : initSol, 3 : TSP + pushed on left prods, 4 : bestInsert  
 
-    for(double temp : allTemps) {
-        for(int iter : allNbIter) {
 
-            callInitSolTSP(); // reset solution 
-            SAA SaaInstance(data, solution, val, oAr, aInfos, fsi); // create SAA object
+    for(double temp : allTemps) { // for each temp
+        for(int iter : allNbIter) { // for each nbIter
+            for(int gen : allSolGen) { // for each gen methods 
 
-            std::cout << "temp : " << temp << " -- iter : " << iter << std::flush; 
-            startTimer(); 
-            SaaInstance.optimize2(temp, iter); // apply SAA 
-            double time = stopTimer(); // get time 
-            std::cout << " -- value : " << val;
-            std::cout << " -- time needed : " << time << std::endl;
+                if(gen == 1) callInitSolCoi(); 
+                if(gen == 2) callInitSol(); 
+                if(gen == 3) callInitSolTSP(); 
+                if(gen == 4) calInitSolBestInsert(); 
 
-            writeSolution(numInstance, temp, iter, val, time);  // write data in file 
+                SAA SaaInstance(data, solution, val, oAr, aInfos, fsi); 
+                std::cout << "temp : " << temp << " -- iter : " << iter 
+                    << " -- solgen : "<< gen << std::flush; 
+                startTimer(); 
+                SaaInstance.optimize2(temp, iter); // apply SAA 
+                double time = stopTimer(); // get time 
+                std::cout << " -- value : " << val;
+                std::cout << " -- time needed : " << time << std::endl;
+                writeSolution(numInstance, temp, iter, val, time, gen);  // write data in file
 
+            }
         }
     }
-
 }
 

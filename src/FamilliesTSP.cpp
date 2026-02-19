@@ -209,13 +209,5 @@ std::vector<int> computeTSP(const Data& data) {
         }
     }
     eraseDummy(sol); // erase dummy from solution obtained
-
-    // std::cout << "Best solution found : " << std::endl;
-    displaySolution(sol); 
-    // std::cout << "Initial Solution value : " << initialSolValue << std::endl; 
-    // std::cout << "Value of solution : " << val << std::endl; 
-    // std::cout << "Re-computed value of solution : " << computeSolVal(sol, distances); 
-    // std::cout << std::endl;
-
     return sol; 
 }

@@ -9,7 +9,7 @@ SRCS = Datas.cpp greedy.cpp main2.cpp  \
 OBJS = $(SRCS:.cpp=.o)
 
 # Nom de l'exécutable
-TARGET = prog
+TARGET = prog 
 
 # Règle par défaut
 all: $(TARGET)

@@ -590,7 +590,7 @@ Solution GreedyBestInsert(const Data& data) {
     Solution sol;
 
     Correlation CorInFam  = BuildCorSameFam(data, false);// within-family correlations
-    Correlation CorBetFam = BuildCorDiffFam(data, true);// between-family correlations
+    Correlation CorBetFam = BuildCorDiffFam(data, false);// between-family correlations
 
     CorBetFam.corFam = buildCorrFam(data);
 
@@ -598,12 +598,12 @@ Solution GreedyBestInsert(const Data& data) {
     std::vector<bool> FamPlaced(data.nbFam, false);// placed families
 
     //BuildOrderFam(FamOrd, FamPlaced, CorBetFam, data);// build family order
-    //BuildOrderFamBestInsert(FamOrd, FamPlaced, CorBetFam, data);// build family order
-    FamOrd = computeTSP(data); 
+    BuildOrderFamBestInsert(FamOrd, FamPlaced, CorBetFam, data);// build family order
+    
     std::vector<int> ProdOrd;// product placement order
 
-    // BuildProdOrder(CorInFam, ProdOrd, data, FamOrd);// build product order
-    BuildProdOrderBestInsert(CorInFam, ProdOrd, data, FamOrd);// build product order
+    BuildProdOrder(CorInFam, ProdOrd, data, FamOrd);// build product order
+    // BuildProdOrderBestInsert(CorInFam, ProdOrd, data, FamOrd);// build product order
 
     sol.prodToRack.assign(data.nbProd, -1);// initialize assignments
     sol.RackToProd.assign(data.nbRacks, {});// initialize rack contents
