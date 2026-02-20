@@ -11,20 +11,22 @@ struct Conductor {
     int val;
     orderAndRacks oAr; 
     aisleInfos aInfos; 
-    famSolInfos fsi; 
-
-    std::vector<int> tabuList; 
-    int tabuTenure = 5; 
+    famSolInfos fsi;
 
     // time attributes
     std::chrono::steady_clock::time_point start; 
+    double finalTime; 
 
     Conductor(const Data& _data); // constructor 
 
+    // display debug prints in terminal
     void debug(const std::string& s); 
 
     // method to display informations for Conductor class methods 
     void displayCalling(const std::string& call); 
+
+    // method to display results informations
+    void displayResults(); 
 
     /**
      * @brief compute oar, aInfos, fsi 
@@ -79,7 +81,13 @@ struct Conductor {
      */
     void FILS(); 
 
-       /**
+    /**
+     * @brief initiate solution & call meta-heuristic choosen from standart input
+     * by the user
+     */
+    void executeUserChoice(); 
+
+    /**
      * @brief copy current solution's "rackToProd" informations
      * only from racks "f1min" to "f2max"
      * @param f1min from rack
@@ -119,14 +127,12 @@ struct Conductor {
      */ 
     void updateFsi(int famId1, int famId2, int FirstProdF1, const std::vector<int>& prodOrder);
 
-
     /**
      * @brief  update struct oAr after a swap
      * @param fam1, fam2 family we swap
      * @param f1min, fam2 bounds of the part of the solution we change
      * @param copyRackToProd copy of the solution before the swap
      */
-
     void updapteOar(int fam1, int fam2, int f1min, int f2max, const std::vector<std::vector<int>>& copyRackToProd);
 
     /**
@@ -143,31 +149,32 @@ struct Conductor {
      * @param f1min, f2max bounds of the part of solution we change
      *@param copyRackToProd copy of the solution before the swap
      */
-
     void repairSolution(int fam1, int fam2, int f1min, int f2max, std::vector<std::vector<int>> copyRackToProd);
 
     /**
      * @brief swap 2 consecutive family if it a goog idea -> return true and if isn't -> return false
      * @param famId1, famId2 position in solution of families we swap
      */
+    bool SwapFamily(int famId1, int famId2); 
 
-    bool SwapFamily(int famId1, int famId2);
-
-    void FindBestFamSwap(); 
-
-    void SmartMultipleFamSwaps(int nbSwaps, int currentIter, int& globalBestVal); 
-
+    /**
+     * @brief call iteratively SAA & SwapFamilly to optimize the solution on product placement with SAA  
+     * then on famillies placement with swapFamily
+     * @param nbIterMax max number of SAA calls allowed 
+     * @return best solution found 
+     */ 
     void swapFamSAA(int nbIterMax); 
 
-    void swapFamSAA2(int nbIterMax); 
-
+    /**
+     * @brief start timer by attributing a value to "start" attribute of Conductor
+     */
     void startTimer(); 
 
+    /**
+     * @brief get time passed since last call of startTimer method 
+     */
     double stopTimer(); 
 
-    void writeSolution(int numInstance, double temp, int nbIter, int val, double time, int solgen); 
-
-    void StatsSaa(int numInstance); 
 }; 
 
 

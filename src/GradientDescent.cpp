@@ -45,27 +45,21 @@ void GradientDescent::optimize() {
                     if(enoughCap) { // if enough cap to send prod
 
                         if(enoughAer) { // if sending prod respect aeration 
-
                             int Delta = computeDeltaSend(prod, prodRack, newPos); // simulate send
-
-                            if(Delta > bestSwap.bestDelta) {// if improvement -> applymove directly
-                            
+                            if(Delta > bestSwap.bestDelta) { // if improvement -> applymove directly
                                 bestSwap.bestDelta = Delta; 
                                 bestSwap.prod1ToProd2 = {prod, -1}; // memo swap
                                 bestSwap.rack1ToRack2 = {prodRack, newPos};
                                 goto next_iteration; // go applyMove & pass to next iteration
                             }
-
                             continue; // -> next iteration
                         }
                         
                         if(!enoughAer) { // if sending prod do not respect aeration 
-
                             int sameFamProd = findFamProdInRack(newPos, f); 
                             if(sameFamProd == -1) continue; // if no same fam prod found -> skip
                             // simulate trade 
                             int Delta = computeDeltaSwap(prod, sameFamProd, prodRack, newPos);
-                            
                             if(Delta > bestSwap.bestDelta) {// if improvement -> applymove directly 
 
                                 bestSwap.bestDelta = Delta; 
@@ -73,7 +67,6 @@ void GradientDescent::optimize() {
                                 bestSwap.rack1ToRack2 = {prodRack, newPos};
                                 goto next_iteration; // go applyMove & pass to next iteration
                             }
-
                             continue; // -> next iteration 
                         }
 
@@ -85,8 +78,7 @@ void GradientDescent::optimize() {
                         if(sameFamProd == -1) continue; // if not found -> skip
                         // simulate trade
                         int Delta = computeDeltaSwap(prod, sameFamProd, prodRack, newPos); 
-                        if(Delta > bestSwap.bestDelta) {
-
+                        if(Delta > bestSwap.bestDelta) { // if improvement -> applymove directly
                             bestSwap.bestDelta = Delta; 
                             bestSwap.prod1ToProd2 = {prod, sameFamProd}; // memo swap
                             bestSwap.rack1ToRack2 = {prodRack, newPos};
@@ -103,8 +95,6 @@ void GradientDescent::optimize() {
             improved = true; 
         } 
     }
-
-    std::cout << "time passed : " << getTime() << std::endl;
 }
 
 void GradientDescent::startTimer() {
