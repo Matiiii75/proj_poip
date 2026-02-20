@@ -3,7 +3,7 @@ CXX = g++
 CXXFLAGS = -Wall -Wextra -std=c++17 -g -O3 # -pg 
 
 # Liste des fichiers source et des objets
-SRCS = Datas.cpp greedy.cpp main2.cpp  \
+SRCS = Datas.cpp greedy.cpp main.cpp  \
 	GradientDescent.cpp SimulatedAnnealing.cpp LocalSearchMethods.cpp \
 	Common.cpp Conductor.cpp FamilliesTSP.cpp
 OBJS = $(SRCS:.cpp=.o)
