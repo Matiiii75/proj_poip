@@ -63,3 +63,44 @@ The application execution is linear and strictly managed by the `Conductor` clas
 | **`SimulatedAnnealing.hpp`** | Algorithm | Simulated Annealing implementation. |
 | **`Milp.hpp`** | Model | Gurobi MILP implementation. |
 | **`Common.hpp`** | Utils | Helper functions (Random, Math). |
+
+## 4. Compilation and Execution
+
+The project includes a `Makefile` to streamline the build process.
+
+### Compilation
+To compile the source code, open your terminal in the src/ folder and enter :
+
+```bash
+make
+```
+
+This command will compile all the necessary files and generate an executable named `prog`.
+
+### Running the Program
+The executable requires a single integer argument passed via the command line. This integer specifies which data instance the program should load and solve.
+
+**Syntax:**
+```bash
+./prog <instance_id>
+```
+
+**Available Instances Mapping:**
+* **`0`** : `toy`
+* **`1`** : `big_category`
+* **`2`** : `big_family`
+* **`3`** : `big_market`
+
+**Example:** To run the optimization on the `big_fam` instance, you would execute:
+```bash
+./prog 2
+```
+
+### Interactive Execution (Standard Input)
+Once the program is launched with the chosen instance, the execution pipeline is handled interactively by the `Conductor::executeUserChoice()` method. 
+
+The program will prompt you in the terminal via standard input (stdin) to:
+1. Choose the **initialization method** (e.g., Random, COI, Best Insertion, TSP).
+2. Choose the **optimization algorithm** (e.g., Simulated Annealing, Gradient Descent, MILP, etc.).
+
+Simply follow the on-screen instructions and type the number corresponding to your choice to execute the desired pipeline.
