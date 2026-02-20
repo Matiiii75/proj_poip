@@ -15,11 +15,6 @@ src/*
 !src/*.hpp
 !src/*.md
 !src/*.ipynb
-!src/Makefile
 !src/
-
-# ignorer main
-src/main.cpp
-src/main2.cpp
 
 cmd_exec.txt
