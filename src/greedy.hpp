@@ -9,7 +9,7 @@ struct Coi{
     
     /* ATTRIBUTS */
 
-    std::vector<std::vector<std::pair<int,double>>> coiProd;   // for each family, contains produts coi
+    std::vector<std::vector<std::pair<int,double>>> coiProd;   // for each family, contains products coi
     std::vector<std::pair<int,double>> coiFam; // contains families coi
 
 
@@ -62,7 +62,7 @@ void updateCorrMatrix(std::vector<std::vector<int>>& famCorr,
     const std::vector<int>& famInOrder); 
 
 /**
- * @brief compute the famillies correlation matrix 
+ * @brief compute the families correlation matrix 
  * @param data problem data 
  * @return correlation matrix 
  */

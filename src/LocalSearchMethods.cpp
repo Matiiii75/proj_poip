@@ -15,7 +15,7 @@ void orderAndRacks::computeOrderAndRacks(const Solution& sol, const Data& data) 
             if(orderOccurRacks[o][prodRack] == 0) // if prodrack didnt exist : 
                 orderToRacks[o].push_back(prodRack); // add rack
             
-            orderOccurRacks[o][prodRack]++; // incrémente 
+            orderOccurRacks[o][prodRack]++; // increment
         }
 
         std::sort(orderToRacks[o].begin(), orderToRacks[o].end()); 
@@ -251,7 +251,7 @@ int LocalSearchMethods::computeSpecialCase(int order, int rack1, int rack2) cons
 
         std::pair<int,int> rack2Neighs = findNeighsRack(rack2, order); // compute R2 neighs
 
-        // compute rack1 go throught and erase impact
+        // compute rack1 go through and erase impact
         Delta += data.dists[rack1Neighs.first][rack1] + data.dists[rack1][rack1Neighs.second]; 
         Delta -= data.dists[rack1Neighs.first][rack1Neighs.second]; 
 
@@ -296,7 +296,7 @@ int LocalSearchMethods::computeDeltaSwap(int prod1, int prod2, int prod1Rack, in
         
     }
 
-    for(const int& o : data.ords.prodToOrds[prod2]) { // same reasonning for prod 2 bellow 
+    for(const int& o : data.ords.prodToOrds[prod2]) { // same reasoning for prod 2 below 
 
         int countRack1 = oAr.orderOccurRacks[o][prod1Rack]; 
         int countRack2 = oAr.orderOccurRacks[o][prod2Rack];
@@ -436,7 +436,7 @@ void LocalSearchMethods::applyMove(const BestSwap& bestSwap)
 
     int newMax = -1; 
     int newMin = data.nbRacks; 
-    for(int p : data.fam.famToProd[famProd1]) { // re-compute reals bounds of famprod1 
+    for(int p : data.fam.famToProd[famProd1]) { // re-compute real bounds of famprod1 
         int r = bestSol.prodToRack[p]; 
         if(r < newMin) newMin = r; 
         if(r > newMax) newMax = r; 

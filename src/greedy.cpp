@@ -35,7 +35,7 @@ Solution coiGreedy(const Data& data){
     int rack = 1;// initialize current rack 
     for(const auto& [f, vf] : coi.coiFam ){// loop over families sorted by increasing COI
         for(const auto& [p, vp] : coi.coiProd[f]){// loop over products of f sorted by increasing COI
-            bool place = false;// bolean saying if p is place in a rack : initialize to false
+            bool place = false;// boolean saying if p is place in a rack : initialize to false
 
             while(!place){// iterate while p isn't place
 
@@ -44,7 +44,7 @@ Solution coiGreedy(const Data& data){
                 }
 
                 if((int) sol.RackToProd[rack].size() + 1 <= capRacksAer[rack]){// if there is the space in rack for a new product
-                    sol.prodToRack[p]= rack; sol.RackToProd[rack].push_back(p); place = true;//update sol and bolean value : p is place  
+                    sol.prodToRack[p]= rack; sol.RackToProd[rack].push_back(p); place = true;//update sol and boolean value : p is place  
                 }else{++rack;}// if there isn't enough of space : pass to next rack                     
             }
         }
@@ -98,7 +98,7 @@ Solution initSolRandom(const Data& data) {
 
     for(int f = 0 ; f < data.nbFam; ++f) { // for each family
         OrderProd[f].assign(data.fam.famToProd[f].begin(),data.fam.famToProd[f].end());// convert unordered_set in vector
-        shuffleVector(OrderProd[f], gen);// create a random order of th pruduct of the family
+        shuffleVector(OrderProd[f], gen);// create a random order of the pruduct of the family
     }
 
     int rack = 1;// initialize current rack 
@@ -107,13 +107,13 @@ Solution initSolRandom(const Data& data) {
         for(int j = 0; j < (int) OrderProd[i].size(); ++j){
             int prod = OrderProd[i][j]; // get product at index j for family in index i
             
-            bool place = false; // bolean saying if prod is place in a rack : initialize to false
+            bool place = false; // boolean saying if prod is place in a rack : initialize to false
             while(!place){
                 if (rack >= data.nbRacks) 
                     throw std::runtime_error("Product placement failed: no racks available");
 
                 if((int) sol.RackToProd[rack].size() + 1 <= newCapRack[rack]){ // if there is the space in rack for a new product
-                    sol.prodToRack[prod]= rack; sol.RackToProd[rack].push_back(prod); place = true;// update sol and bolean value : p is place//update bolean value : p is place    
+                    sol.prodToRack[prod]= rack; sol.RackToProd[rack].push_back(prod); place = true;// update sol and boolean value : p is place//update boolean value : p is place    
                 }else{++rack;} // if there isn't enough of space : pass to next rack                     
             }
         }
@@ -127,7 +127,7 @@ void updateCorrMatrix(std::vector<std::vector<int>>& famCorr,
 {
     for(int i = 0; i < (int)famInOrder.size()-1; ++i) { // for each fam 
         for(int j = i+1; j < (int)famInOrder.size(); ++j) {
-            famCorr[famInOrder[i]][famInOrder[j]]++;// increment seen famillies
+            famCorr[famInOrder[i]][famInOrder[j]]++;// increment seen families
             famCorr[famInOrder[j]][famInOrder[i]]++; 
         }
     }
@@ -143,7 +143,7 @@ std::vector<std::vector<int>> buildCorrFam(const Data& data) {
         std::vector<int> famInOrder; 
 
         for(int prod : data.ords.ordsToProd[o]) {// for each prod in order 
-            int prodFam = data.fam.prodToFam[prod];// get familly of prod 
+            int prodFam = data.fam.prodToFam[prod];// get family of prod 
             if(isFamInOrd[prodFam]) continue;// if already seen -> skip
             famInOrder.push_back(prodFam);// add in order 
             isFamInOrd[prodFam] = true;// memo already seen

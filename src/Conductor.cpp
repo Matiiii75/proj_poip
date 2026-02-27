@@ -87,15 +87,15 @@ void Conductor::executeUserChoice() {
     int initChoice = -1; 
     std::cout << "Choose way to initiate solution : " << std::endl;
     std::cout << "Random : 0 / ";
-    std::cout << "Left-alligned : 1 / ";
+    std::cout << "Left-aligned : 1 / ";
     std::cout << "COI : 2 / ";
     std::cout << "TSP : 3" << std::endl;
-    std::cin >> initChoice; // standart input 
+    std::cin >> initChoice; // standard input 
     int heuristicChoice = -1; 
     std::cout << "Choose way to optimize product placement : " << std::endl;
     std::cout << "FILS : 0 / ";
     std::cout << "SAA : 1" << std::endl;
-    std::cin >> heuristicChoice; // standart input 
+    std::cin >> heuristicChoice; // standard input 
 
     switch(initChoice) { // applying initSol choice
         case 0 : callInitRandomSolution(); break; 
@@ -120,7 +120,7 @@ void Conductor::executeUserChoice() {
 std::vector<std::vector<int>> Conductor::copyRackToProd(int f1min, int f2max) {
 
     std::vector<std::vector<int>> copyRackToProd(f2max - f1min +1); 
-    int idVec = 0; // to re-index (for order of famillies instead of IDs)
+    int idVec = 0; // to re-index (for order of families instead of IDs)
     for(int r = f1min; r <= f2max; ++r) {  
         for(int prod : solution.RackToProd[r]) 
             copyRackToProd[idVec].push_back(prod); 
@@ -137,27 +137,27 @@ int Conductor::computeProdOrder(int fam1, int fam2, std::vector<int>& prodOrder)
     int f2min = fsi.famIntervals[fam2].first; 
     int f2max = fsi.famIntervals[fam2].second;
 
-    prodOrder.resize((int)data.fam.famToProd[fam1].size() + (int)data.fam.famToProd[fam2].size()); // reserve the plece who's the number of prod
+    prodOrder.resize((int)data.fam.famToProd[fam1].size() + (int)data.fam.famToProd[fam2].size()); // reserve space equal to the number of products
 
     int idVec = 0; // indicate where we are in the vec prodOrder 
     for(int r = f2min; r <= f2max ; ++r) { // first, store order of fam2's products
         for(int p = 0; p < (int)solution.RackToProd[r].size(); ++p) { 
             int prod = solution.RackToProd[r][p]; // recover product in position p in rack r
 
-            if(data.fam.prodToFam[prod] == fam2) { //! ajouter un if r = fmin/max
+            if(data.fam.prodToFam[prod] == fam2) {
                 prodOrder[idVec] = prod;
                 idVec++;
             }
         }
     }
-    bool firstProd = true; int FirstProdF1 = -1; // we want to store the number of the first product of f1
-    for(int r = f1min; r <= f1max ; ++r) { //then, store order of fam2's products
+    bool firstProd = true; int FirstProdF1 = -1; // store the index of the first product of f1
+    for(int r = f1min; r <= f1max ; ++r) { // then, store order of fam2's products
         for(int p = 0; p < (int)solution.RackToProd[r].size(); ++p) {
             int prod = solution.RackToProd[r][p];
         
-            if(data.fam.prodToFam[prod] == fam1) { //! ajouter un if r = fmin/max
+            if(data.fam.prodToFam[prod] == fam1) { 
                 prodOrder[idVec]= prod; 
-                if(firstProd) {FirstProdF1 = idVec; firstProd = false;} // recuperate the first product of F1
+                if(firstProd) {FirstProdF1 = idVec; firstProd = false;} // recover the first product of F1
                 idVec++;
             }    
         }
@@ -169,11 +169,11 @@ int Conductor::computeProdOrder(int fam1, int fam2, std::vector<int>& prodOrder)
 void Conductor::placeProducts(int fam1, int fam2, int f1min, int f2max, const std::vector<int>& prodOrder) {
 
     int idVec = 0; // position of the product we want to place 
-    int prod; // product in positon idVec
+    int prod; // product in position idVec
 
-    for(int r = f1min; r <= f2max; ++r) {  // for all racks in the intervall we modify
+    for(int r = f1min; r <= f2max; ++r) {  // for all racks in the interval we modify
         for(int p = 0; p < (int)solution.RackToProd[r].size(); ++p) {
-            prod = prodOrder[idVec]; // product in positon idVec
+            prod = prodOrder[idVec]; // product in position idVec
 
             int prodBeforeSwap = solution.RackToProd[r][p]; // product before the swap
 
@@ -221,7 +221,7 @@ void Conductor::updateFsi(int famId1, int famId2, int FirstProdF1, const std::ve
 
         if(sizeRackMin < capRackMin) // if enough cap in newMin rack for family 1
             fsi.defIntervals[fam2].second = newMinF1; // fam2 can also go there 
-        else // else, fam2 can go on rack juste before newMinF1
+        else // else, fam2 can go on rack just before newMinF1
             fsi.defIntervals[fam2].second = newMinF1 - 1; 
 
         int capRackMax = data.capRacks[newMaxF2]; // get cap of new Max f2 
@@ -248,7 +248,7 @@ void Conductor::updapteOar(int fam1, int fam2, int f1min, int f2max, const std::
                 //update orderAndRacks for prodBefore
                 for(const int& o : data.ords.prodToOrds[prodBeforeSwap]) { // for each order 
                     if(--oAr.orderOccurRacks[o][r] == 0) // if order o didn't use r
-                        eraseSortedVec(r, oAr.orderToRacks[o]); // add r  
+                        eraseSortedVec(r, oAr.orderToRacks[o]); // erase r  
                 }
                 //update orderAndRacks for prod
                 for(const int& o : data.ords.prodToOrds[prod]) { // for each order 
@@ -265,7 +265,7 @@ bool Conductor::applyMooveFamily(int fam1, int fam2, int f1min, int f2max, std::
 
     placeProducts(fam1, fam2, f1min, f2max, prodOrder); // "make" the swap
     int newCost = computeSolValue(solution, data);
-    if(newCost < val + (val * 5) / 100) { // acceptation rate 
+    if(newCost < val + (val * 5) / 100) { // acceptance rate 
         val = newCost;
         return true;
     }else{ // we don't make the swap
@@ -275,12 +275,12 @@ bool Conductor::applyMooveFamily(int fam1, int fam2, int f1min, int f2max, std::
 
 void Conductor::repairSolution(int fam1, int fam2, int f1min, int f2max, std::vector<std::vector<int>> copyRackToProd) {
 
-    int rackCopy = 0; // rack in copyRackToProd 0 <-> f1mon 
+    int rackCopy = 0; // rack in copyRackToProd 0 <-> f1min 
 
     for(int r = f1min; r <= f2max; ++r) { 
         for(int p = 0; p < (int)solution.RackToProd[r].size(); ++p) {
             
-            int oldProd = solution.RackToProd[r][p]; // the product in rack r position p beforr repaire sol
+            int oldProd = solution.RackToProd[r][p]; // the product in rack r position p before repair sol
             int newProd = copyRackToProd[rackCopy][p]; // the product we will place in rack r position p
 
             if((data.fam.prodToFam[oldProd] == fam1) 
@@ -335,7 +335,7 @@ void Conductor::swapFamSAA(int nbIterMax) {
         int f1Index, f2Index; 
         f1Index = generateRandomInt(generator, 0, data.nbFam-2);  // get random fam
         f2Index = f1Index + 1; 
-        applySwap = false; // will be true if swapFam consider an upgrade 
+        applySwap = false; // will be true if swapFam considers an upgrade 
         applySwap = SwapFamily(f1Index, f2Index); 
         if(applySwap) { // if we accept the swap
             SimulatedAnnealing(); 

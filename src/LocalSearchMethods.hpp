@@ -5,10 +5,10 @@
 #include "Common.hpp"
 
 /**
- * @brief contains orders and racks relatives informations 
+ * @brief contains orders and racks related informations 
  * @param orderToRacks associating racks used to satisfy each order
  * @param orderOccurRacks tells how much time we use a certain rack for each order
- * @param computeOrderAndRacks method that compute the two attributs described above from 
+ * @param computeOrderAndRacks method that compute the two attributes described above from 
  * a given solution and the problem data
  */
 struct orderAndRacks {
@@ -25,7 +25,7 @@ struct orderAndRacks {
  * @param aisleCap associating to each aisle it's capacity
  * @param AisleAer to each aisle it's aeration
  * @param aisleRemainCap to each aisle, associate it's remaining capacity for a given solution
- * @note comes with methods to initiate thoses datas properly from given data and/or given solution
+ * @note comes with methods to initiate these datas properly from given data and/or given solution
  */
 struct aisleInfos {
 
@@ -46,7 +46,7 @@ struct aisleInfos {
 /**
  * @brief memorize movement 
  * @note can encode either a swap (if both prod1 and prod2 != -1)
- * @note or a send, consisting of simply sending prod1 to rack2 (wich mean prod2 = -1)
+ * @note or a send, consisting of simply sending prod1 to rack2 (which mean prod2 = -1)
  * @note Default constructor initialize BestSwap with delta = 0, and racks/prods = -1
  */
 struct BestSwap {
@@ -67,7 +67,7 @@ struct BestSwap {
  * @note comes with two function initiating the attributs of the structs
  * @note need to provide problem data and current solution treating 
  * @warning in @param computeFamInterFamOrd families are added by push_back in @param famOrder. 
- * @warning wich mean this function can be called only one time on a single declared object of famSolInfos
+ * @warning which mean this function can be called only one time on a single declared object of famSolInfos
  */
 struct famSolInfos {
 
@@ -107,7 +107,7 @@ struct LocalSearchMethods {
     bool rackCapEnough(int rack) const; 
     
     /**
-     * @brief search if there exists another product of familly fam in rack rack
+     * @brief search if there exists another product of family fam in rack rack
      * @param rack rack we are looking in
      * @param fam fam we are seeking 
      * @return product ID, or -1 if not found 
@@ -126,7 +126,7 @@ struct LocalSearchMethods {
     /**
      * @brief compute the impact one position has on the solution cost 
      * @brief so, it computes the cost passing by currRack and the cost without passing. 
-     * @param order order for wich we compute the cost 
+     * @param order order for which we compute the cost 
      * @param currRack rack containing the product
      * @note if we enter the function, it means we're in the case where the product was alone in rack for order 
      */
@@ -145,7 +145,7 @@ struct LocalSearchMethods {
      * @param order order ID 
      * @param rack1 current position we are about to erase 
      * @param rack new position we are considering 
-     * @note take particulary attention to the case we're moving a product 
+     * @note take particularly attention to the case we're moving a product 
      * to a position nearer than it's neighbors in current solution
      */
     int computeSpecialCase(int order, int rack1, int rack2) const; 
@@ -156,7 +156,7 @@ struct LocalSearchMethods {
      * @param prod2 product 2
      * @param prod1Rack rack of product 1 
      * @param prod2Rack rack of product 2 
-     * @return delta wich is value of gain/loss related to swapping prod1 & prod2
+     * @return delta which is value of gain/loss related to swapping prod1 & prod2
      * @note if delta > 0 : improvement
      * @note if delta < 0 : worsening 
      */
@@ -179,5 +179,5 @@ struct LocalSearchMethods {
      */
     void applyMove(const BestSwap& bestSwap);
 
-    virtual void optimize() = 0; // optimize will launch metaheuristics methods in herited structs
+    virtual void optimize() = 0; // optimize will launch metaheuristics methods in inherited structs
 }; 

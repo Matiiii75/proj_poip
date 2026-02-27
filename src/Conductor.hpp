@@ -43,7 +43,7 @@ struct Conductor {
     /**
      * @brief call initSol function from "greedy.hpp" in order to compute 
      * an initial solution 
-     * @note the initial solution obtained will follow ascending ordering of familly
+     * @note the initial solution obtained will follow ascending ordering of family
      * and left-aligned products 
      */
     void callInitSol();   
@@ -56,8 +56,8 @@ struct Conductor {
     void callInitSolCoi(); 
 
     /**
-     * @brief call comptuteTSP & fillSolution from "FamilliesTSP.hpp" in order to compute 
-     * an initial solution with optimal famillies ordering
+     * @brief call comptuteTSP & fillSolution from "FamiliesTSP.hpp" in order to compute 
+     * an initial solution with optimal families ordering
      */
     void callInitSolTSP(); 
 
@@ -70,14 +70,14 @@ struct Conductor {
     /**
      * @brief create and execute Simulated Annealing algorithm in order 
      * to optimize products placing on current "solution" attribute of Conductor Class
-     * @note do not optimize on Familly ordering
+     * @note do not optimize on Family ordering
      */
     void SimulatedAnnealing(); 
 
     /**
      * @brief create and execute First Improvement Local Search algorithm in order 
      * to optimize products placing on current "solution" attribute of Conductor Class
-     * @note do not optimize on Familly ordering
+     * @note do not optimize on Family ordering
      */
     void FILS(); 
 
@@ -101,7 +101,7 @@ struct Conductor {
      * @brief compute the order of products encoded between two rack and return the 1rst product of fam1
      * @param fam1, fam2 family of the products we compute the order on
      * @param prodOrder the vector the will contain the order computed
-     * @return the ID of the 1st product of f1. Return -1 if f1 doesnt have first product (wich should not happen)
+     * @return the ID of the 1st product of f1. Return -1 if f1 doesnt have first product (which should not happen)
      * @note prodOrder is modified by reference passed in argument 
      * @warning prodOrder must be declared outside this function 
      */
@@ -122,7 +122,7 @@ struct Conductor {
     /**
      * @brief update struct fsi after a swap
      * @param famId1, famId2 position of family in the solution before swap
-     * @param FirstProdF1 1rst prod place of fam1
+     * @param FirstProdF1 1st prod place of fam1
      * @param prodOrder order of the product of the solution after swap
      */ 
     void updateFsi(int famId1, int famId2, int FirstProdF1, const std::vector<int>& prodOrder);
@@ -145,21 +145,21 @@ struct Conductor {
 
     /**
      * @brief change solution after a swap as hox it was before swap
-     * @param fam1, fam2 family we moove
+     * @param fam1, fam2 family we move
      * @param f1min, f2max bounds of the part of solution we change
      *@param copyRackToProd copy of the solution before the swap
      */
     void repairSolution(int fam1, int fam2, int f1min, int f2max, std::vector<std::vector<int>> copyRackToProd);
 
     /**
-     * @brief swap 2 consecutive family if it a goog idea -> return true and if isn't -> return false
+     * @brief swap 2 consecutive family if it a good idea -> return true and if isn't -> return false
      * @param famId1, famId2 position in solution of families we swap
      */
     bool SwapFamily(int famId1, int famId2); 
 
     /**
-     * @brief call iteratively SAA & SwapFamilly to optimize the solution on product placement with SAA  
-     * then on famillies placement with swapFamily
+     * @brief call iteratively SAA & SwapFamily to optimize the solution on product placement with SAA  
+     * then on families placement with swapFamily
      * @param nbIterMax max number of SAA calls allowed 
      * @return best solution found 
      */ 

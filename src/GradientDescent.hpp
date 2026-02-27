@@ -2,7 +2,7 @@
 
 #include "LocalSearchMethods.hpp"
 
-// GradientDesenct inherite from LocalSearchMethods
+// GradientDescent inherits from LocalSearchMethods
 struct GradientDescent : LocalSearchMethods {
 
    std::chrono::steady_clock::time_point start; 

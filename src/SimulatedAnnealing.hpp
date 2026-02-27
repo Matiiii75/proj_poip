@@ -20,12 +20,12 @@ struct SAA : LocalSearchMethods {
     double uniformRandom(std::mt19937& g); 
 
     /**
-     * @brief initiate structure to faslty check product associated to famillies 
+     * @brief initiate structure to fastly check product associated to families 
      */
     std::vector<std::vector<int>> initFamToProdVector(const Data& data);
 
     /**
-     * @brief randomly get a product of given familly
+     * @brief randomly get a product of given family
      */
     int getRandomProdInFam(int fam, const Data& data, std::mt19937& g, const std::vector<std::vector<int>>& famToProdVec); 
 
@@ -42,7 +42,7 @@ struct SAA : LocalSearchMethods {
     bool metropolis(int Delta, double temp, std::mt19937& g); 
     
     /**
-     * @brief can be call at each iteration of SAA to visualize
+     * @brief can be called at each iteration of SAA to visualize
      * the evolution of solution quality 
      */
     void displayInfos(int iter, double temp); 
@@ -53,7 +53,7 @@ struct SAA : LocalSearchMethods {
     void debug(std::string s); 
 
     /**
-     * @brief initalize temperature based on algorithm described in mathematic litterature 
+     * @brief initialize temperature based on algorithm described in mathematic literature 
      */
     double initTemp(const std::vector<std::vector<int>>& famToProdVec, std::mt19937& g);  
     

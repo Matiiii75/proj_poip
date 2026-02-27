@@ -1,6 +1,6 @@
 #include "SimulatedAnnealing.hpp"
  
-// ! faire constructeur 
+
 
 SAA::SAA(const Data& _data, Solution& _sol, int& _solVal, orderAndRacks& _oAr, aisleInfos& _aInfos, famSolInfos& _fsi)
 : LocalSearchMethods(_data, _sol, _solVal, _oAr, _aInfos, _fsi) {}
@@ -59,13 +59,13 @@ void SAA::debug(std::string s) {
 double SAA::initTemp(const std::vector<std::vector<int>>& famToProdVec, std::mt19937& g) {
 
     double temp = 1000; 
-    double wantedAcceptRate = 0.8; // the acceptation rate we desire 
+    double wantedAcceptRate = 0.8; // the acceptance rate we desire 
     std::vector<int> worseningDeltas;  
     
     // compute 1000 degrading movement's Delta and save them
     while((int)worseningDeltas.size() < data.nbProd * 10) { 
 
-        // tirages aléatoires
+        // random samplings
         int randFam = genRandomNumber(0, data.nbFam-1, g); 
         int randProd = getRandomProdInFam(randFam, data, g, famToProdVec); 
         int prodRack = bestSol.prodToRack[randProd]; 
@@ -126,7 +126,7 @@ void SAA::optimize() {
     std::random_device rd; 
     std::mt19937 g(rd()); 
 
-    // ! dessous : on pourrait le passer en argument au recuit si on prévois de le faire plusieurs fois
+    
     std::vector<std::vector<int>> famToProdVec = initFamToProdVector(data); 
 
     double temp = initTemp(famToProdVec, g);  
@@ -170,7 +170,7 @@ void SAA::optimize() {
                 bestSwap.rack1ToRack2 = {prodRack, randPos}; 
                 applyMove(bestSwap); 
             }
-            else { // -> check metropolis criterium
+            else { // -> check metropolis criterion
                 bool accept = metropolis(Delta, temp, g);
                 if(accept) { // if probability accept the move : 
                     bestSwap.bestDelta = Delta; 

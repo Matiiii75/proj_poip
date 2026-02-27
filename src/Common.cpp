@@ -2,24 +2,24 @@
 
 int computeSolValue(const Solution& sol, const Data& data) {
 
-    std::vector<int> orderVal(data.nbOrd, 0); // orderVal[k] = value (distance) to satisfy order k 
-    std::vector<int> lastRackSeen(data.nbOrd, 0); // lastRackSeen[k] = last rack seen for this order (0) if none still
+    std::vector<int> orderVal(data.nbOrd, 0); // orderVal[k] = value (distance) required to satisfy order k 
+    std::vector<int> lastRackSeen(data.nbOrd, 0); // lastRackSeen[k] = last rack visited for this order (0 if none yet)
 
     for(int i = 1; i < data.nbRacks; ++i) { // for each rack in ascending order
-        for(const int& currProd : sol.RackToProd[i]) { // for each prod in ths rack
+        for(const int& currProd : sol.RackToProd[i]) { // for each prod in this rack
             for(const int& currOrd : data.ords.prodToOrds[currProd]) { // for each order containing currProd
 
                 int lrs = lastRackSeen[currOrd]; 
-                orderVal[currOrd] += data.dists[lrs][i]; // add dist from last rack seen to curr one treating 
+                orderVal[currOrd] += data.dists[lrs][i]; // add distance from the last rack visited to the current one 
                 lastRackSeen[currOrd] = i; // update last rack seen 
 
             }
         }
     }
     for(int i = 0; i < data.nbOrd; ++i) // for each order
-        orderVal[i] += data.dists[lastRackSeen[i]][data.nbRacks-1]; // add disance from lastrack to depot 
+        orderVal[i] += data.dists[lastRackSeen[i]][data.nbRacks-1]; // add distance from lastrack to depot 
 
-    int solVal = 0; // compute total val 
+    int solVal = 0; // compute total value
     for(const int& val : orderVal) solVal += val;
 
     return solVal; 
@@ -45,7 +45,7 @@ void addSortedVec(int x, std::vector<int>& v) {
 
 void eraseSortedVec(int x, std::vector<int>& v) {
     auto it = std::lower_bound(v.begin(), v.end(), x); // seek LB of x 
-    if(it != v.end() && *it == x) v.erase(it); // if found x -> erase 
+    if(it != v.end() && *it == x) v.erase(it); // if x is found, erase it
 }
 
 

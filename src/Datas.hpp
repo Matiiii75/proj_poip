@@ -15,12 +15,12 @@
 
 
 /**
-* @brief Contains Familly related infos 
+* @brief Contains Family related infos 
 */
 struct Familly {
 
     /* ATTRIBUTES */
-    std::vector<int> prodToFam; // wich fam associated to each prod
+    std::vector<int> prodToFam; // which fam associated to each prod
     std::vector<std::unordered_set<int>> famToProd; // wich prods associated to each fam
 
     /* METHODS */
@@ -33,8 +33,8 @@ struct Familly {
 struct Orders {
 
     /* ATTRIBUTES */
-    std::vector<std::unordered_set<int>> ordsToProd; // fastly check products associated to orders
-    std::vector<std::unordered_set<int>> prodToOrds; // fastly check orders associated to product
+    std::vector<std::unordered_set<int>> ordsToProd; // quickly check products associated to orders
+    std::vector<std::unordered_set<int>> prodToOrds; // quickly check orders associated to product
     std::vector<std::vector<bool>> isProdInOrd; // for better performance 
 
     /* METHODS */
@@ -108,13 +108,13 @@ struct Data {
     void readOrders(const std::string& f6); // read orders.txt
 
     void displayData(); // display all data in the structure 
-    std::vector<int> initCapRacksAer() const; // assign initial empty racks in order to respect aeration constr
+    std::vector<int> initCapRacksAer() const; // assign initial empty racks in order to respect aeration constraint
 
     void throwErrorFile(const std::string& where); // throw error and display where it happened
 
         
     /**
-    * @brief compute matrix of boleans where isProdInOrd[o][prod] = true if prod is in order o
+    * @brief compute matrix of booleans where isProdInOrd[o][prod] = true if prod is in order o
     * @warning must be pre computed in main if data are const given in method (such as gradient) argument
     */ 
     void computeIsProdInOrd();

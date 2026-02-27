@@ -20,18 +20,18 @@ void shuffleVector(std::vector<int>& vec, std::mt19937& g);
 
 
 /**
-* @brief randomly generate ordering of family  
+* @brief Randomly generate an ordering of families 
 */
 std::vector<int> genRandomOrderFam(const Data& data); 
 
 /**
-* @brief add element in increasing order sorted vector
+* @brief Add an element to a sorted vector in increasing order
 */
 void addSortedVec(int x, std::vector<int>& v); 
 
 
 /**
-* @brief erase element of increasing order sorted vector
+* @brief Erase an element from a sorted vector in increasing order
 */
 void eraseSortedVec(int x, std::vector<int>& v); 
 

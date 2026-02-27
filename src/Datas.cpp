@@ -4,11 +4,11 @@
 
 void Familly::displayData() {
 
-    std::cout << "#### ENTERED FAMILLY DISPLAY FUNCTION ####" << std::endl;
+    std::cout << "#### ENTERED FAMILY DISPLAY FUNCTION ####" << std::endl;
     std::cout << std::endl;
 
     for(int i = 0; i < (int)prodToFam.size(); ++i) // prodToFam display
-        std::cout << i << "->" << "familly " << prodToFam[i] << std::endl;
+        std::cout << i << "->" << "family " << prodToFam[i] << std::endl;
     std::cout << std::endl;
     for(int i = 0; i < (int)famToProd.size(); ++i) { // famToProd display
         std::cout << "fam : " << i << " : ";
@@ -49,7 +49,7 @@ void Solution::displaySolution(int numInstance) {
     std::ofstream write(path); // open output file
     int nbProd = prodToRack.size(); // compute  number of products
 
-    write << nbProd << std::endl; // write number of froducts 
+    write << nbProd << std::endl; // write number of products 
     for(int p = 0; p < nbProd; ++p) write << prodToRack[p] << std::endl; // for each product write his rack
 
     write.close(); // close output file
@@ -123,8 +123,8 @@ void Data::readProdCircuits(const std::string& f4) {
 
     f >> nbProd; 
     for(int i = 0; i < nbProd; ++i) { 
-        int currFam; f >> currFam; // store currFamilly 
-        fam.prodToFam[i] = currFam; // memorize product i is in familly currFam
+        int currFam; f >> currFam; // store currFamily 
+        fam.prodToFam[i] = currFam; // memorize product i is in family currFam
         fam.famToProd[currFam].insert(i); // memorize currFam is assigned to product i
     }   
 
@@ -139,7 +139,7 @@ void Data::readAisleRacks(const std::string& f5) {
     for(int i = 0; i < nbAisle; ++i) {
         int currNbRacks; f >> currNbRacks; 
         for(int j = 0; j < currNbRacks; ++j) {
-            f >> aisle[i];  // read all the rack inthe aisle and at the and store only the last one
+            f >> aisle[i];  // read all the rack in the aisle and at the end store only the last one
         }
     }
 
@@ -180,7 +180,7 @@ void Data::displayData() {
     std::cout << "nb racks : " << nbRacks << std::endl;
     std::cout << "nb locations : " << nbLoc << std::endl;
     std::cout << "nb products : " << nbProd << std::endl;
-    std::cout << "nb familly (circuits) : " << nbFam << std::endl;
+    std::cout << "nb family (circuits) : " << nbFam << std::endl;
     std::cout << "nb of aisles : " << nbAisle << std::endl;
     std::cout << "nb of orders : " << nbOrd << std::endl;   
     std::cout << "aeration : " << aeration << std::endl << std::endl;
@@ -235,7 +235,7 @@ std::vector<int> Data::initCapRacksAer() const {
         }
     } 
 
-    return racksCapCopy; // return new capacity of racks; wich determine implicitely wich racks are lock for aeration
+    return racksCapCopy; // return new capacity of racks; which determine implicitely wich racks are lock for aeration
 }
 
 void Data::throwErrorFile(const std::string& where) {
